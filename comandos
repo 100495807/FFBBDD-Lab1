@@ -1,0 +1,12 @@
+CREATE TABLE nombre (
+    atributo    tipo(tamaño),
+    CONSTRAINT pk_tabla PRIMARY KEY(atributo/s),
+    CONSTRAINT ck_tabla CHECK (lo_q_sea),
+    CONSTRAINT fk_tabla_atributro FOREIGN KEY(atributo) REFERENCES otra_tabla(atributo)
+);
+
+
+--BORRAR TABLA              DROP TABLE nombre;
+--VER TABLA                 DESC nombre;
+--VER TODAS LAS TABLAS      SELECT table_name FROM USER_TABLES;     Poner eso literal
+--LIMPIAL PANTALLA          cl scr
