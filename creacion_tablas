@@ -1,0 +1,181 @@
+CREATE TABLE producto (
+    id          NUMBER(15),            --preguntar a javier calle not null en pk
+    nombre      VARCHAR2 (50) NOT NULL,
+    coffea      VARCHAR2 (50) NOT NULL,
+    varietal    VARCHAR2 (50) NOT NULL,
+    origen      VARCHAR2 (50) NOT NULL,
+    tostado     VARCHAR2 (50) NOT NULL,
+    cafeina     NUMBER (1) NOT NULL,            --si=1, no=0
+    CONSTRAINT pk_producto PRIMARY KEY (id),
+    CONSTRAINT ck_producto CHECK (cafeina<2)
+) ;
+
+CREATE TABLE formato (
+    id          NUMBER(15),
+    nombre      VARCHAR2(50) NOT NULL,
+    CONSTRAINT pk_formato PRIMARY KEY(id)
+);
+
+CREATE TABLE cantidad (
+    id          NUMBER(15),
+    cantidad    NUMBER(7) NOT NULL,
+    magnitud    VARCHAR2(50) NOT NULL,
+    CONSTRAINT pk_cantidad PRIMARY KEY(id)
+);
+
+CREATE TABLE formatoProducto (
+    idProducto     NUMBER(15) NOT NULL,
+    idFormato      NUMBER(15) NOT NULL,
+    idCantidad     NUMBER(15) NOT NULL,
+    CONSTRAINT fk_formatoProducto_idProducto FOREIGN KEY(idProducto) REFERENCES producto(id),
+    CONSTRAINT fk_formatoProducto_idFormato FOREIGN KEY(idFormato) REFERENCES formato(id),
+    CONSTRAINT fk_formatoProducto_idCantidad FOREIGN KEY(idCantidad) REFERENCES cantidad(id)
+);
+
+CREATE TABLE articulo (
+    idCodigo    NUMBER(15),
+    cantidad    NUMBER(7) NOT NULL,
+    pvp         NUMBER(7) NOT NULL,
+    stock       NUMBER(7) NOT NULL,
+    producto    NUMBER(7) NOT NULL,
+    stockMin    NUMBER(2) NOT NULL,
+    stockMax    NUMBER(7) NOT NULL,
+    CONSTRAINT pk_articulo PRIMARY KEY(idCodigo),
+    CONSTRAINT fk_articulo_cantidad FOREIGN KEY(cantidad) REFERENCES cantidad(id),
+    CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(id),
+    CONSTRAINT ck_articulo_stockMin CHECK (stockMin>4),
+    CONSTRAINT ck_articulo_stockMax CHECK (stockMax<15)
+);
+
+CREATE TABLE proveedor (
+    id              NUMBER(15),
+    cif             NUMBER(9) NOT NULL,
+    nombreComercio  VARCHAR2(50) NOT NULL,
+    correo          VARCHAR2(50) NOT NULL,
+    telefono        NUMBER(10) NOT NULL,
+    tarjetaBanco    VARCHAR2(50) NOT NULL,                          
+    codPostal       NUMBER(6) NOT NULL,
+    pais            VARCHAR2(50) NOT NULL,
+    tiempoMedio     NUMBER(7) NOT NULL,
+    numPedido       NUMBER(7) NOT NULL,
+    CONSTRAINT pk_proveedor PRIMARY KEY(id)
+
+);
+
+CREATE TABLE pedidosProveedor (
+    id                  NUMBER(15),
+    proveedor           VARCHAR2(50) NOT NULL,
+    cantidadUnidad      NUMBER(7) NOT NULL,
+    fecha               DATE NOT NULL,
+    hora                TIME NOT NULL,
+    estado              VARCHAR(20) NOT NULL,
+    articulo            NUMBER(7) NOT NULL,
+    costePedidoTotal    NUMBER(7) NOT NULL,
+    CONSTRAINT pk_pedidosProveedor PRIMARY KEY(id),
+    CONSTRAINT fk_pedidosProveedor_proveedor FOREIGN KEY(proveedor) REFERENCES proveedor(id),
+    CONSTRAINT fk_pedidosProveedor_articulo FOREIGN KEY(articulo) REFERENCES articulo(idCodigo)
+);
+
+CREATE TABLE proveedorArticulo (
+    idArticulo      NUMBER(15) NOT NULL,
+    idProveedor     NUMBER(15) NOT NULL,
+    coste           NUMBER(15) NOT NULL,
+    CONSTRAINT fk_proveedorArticulo_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
+    CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(id),
+);
+
+CREATE TABLE cliente (
+    id          NUMBER(15),
+    correo      VARCHAR2(50),
+    telefono    NUMBER(12),
+    nombre      VARCHAR2(50) NOT NULL,
+    apellido1   VARCHAR2(50) NOT NULL,
+    apellido2   VARCHAR2(50),
+    CONSTRAINT pk_cliente PRIMARY KEY(id)
+);
+
+CREATE TABLE registrado (
+    id                  NUMBER(15),
+    usuario             VARCHAR2(50) NOT NULL,
+    password            VARCHAR2(50) NOT NULL,           --DUDAAAAAAAAAAAAAAAAAAAAAAA
+    fechaRegistro       DATE NOT NULL,
+    horaRegistro        TIME NOT NULL,
+    preferenciaContacto VARCHAR2(50) NOT NULL,
+    direccion           NUMBER(7) NOT NULL,
+    tarjeta             NUMBER(7) NOT NULL,
+    bonoDescuento       NUMBER(7) NOT NULL,
+    CONSTRAINT fk_registrado_id FOREIGN KEY(id) REFERENCES cliente(id),
+    CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(id),
+    CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta),
+    CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(id)
+);
+
+CREATE TABLE pedidoCliente (
+    id              NUMBER(15),
+    fecha           DATE NOT NULL,
+    direccion       NUMBER(7) NOT NULL,
+    horaPago        TIME NOT NULL,
+    fechaPago       DATE NOT NULL,
+    tarjeta         NUMBER(10) NOT NULL,
+    fechaEntrega    NUMBER(10) NOT NULL,
+    precioTotal     NUMBER(7) NOT NULL,
+    CONSTRAINT pk_pedidoCliente PRIMARY KEY(id),
+    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(id),
+    CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta)
+);
+
+CREATE TABLE pedidoArticuloCliente (
+    idPedido        NUMBER(15) NOT NULL,
+    idArticulo      NUMBER(15) NOT NULL,
+    idClienteReg    NUMBER(15) NOT NULL,
+    cantidad        NUMBER(7) NOT NULL,
+    CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(idPedido) REFERENCES pedidoCliente(id),
+    CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
+    CONSTRAINT fk_pedidoArticuloCliente_idClienteReg FOREIGN KEY(idClienteReg) REFERENCES cliente(id)
+);
+
+CREATE TABLE tarjetaCredito (
+    numTarjeta      NUMBER(20),
+    titular         VARCHAR2(50) NOT NULL,
+    company         VARCHAR2(50) NOT NULL,
+    caducidadMes       NUMBER(2) NOT NULL,
+    caducidadYear      NUMBER(4) NOT NULL,
+    CONSTRAINT pk_tarjetaCredito PRIMARY KEY(numTarjeta)
+);
+
+CREATE TABLE direccion (
+    id              NUMBER(15),
+    tipoVia         VARCHAR2(50) NOT NULL,
+    nombreVia       VARCHAR2(50) NOT NULL,
+    numInmueble     NUMBER(3) NOT NULL,
+    numBloque       NUMBER(3),
+    escalera        VARCHAR(50),
+    piso            NUMBER(3),
+    puerta          VARCHAR2(1),
+    codigoPostal    NUMBER(5) NOT NULL,
+    ciudad          VARCHAR2(50) NOT NULL,
+    pais            VARCHAR2(50) NOT NULL,
+    CONSTRAINT pk_direccion PRIMARY KEY(id)
+);
+
+CREATE TABLE descuento (
+    id          NUMBER(15),
+    porcentaje  NUMBER(4)  NOT NULL,
+    fecha       DATE NOT NULL,
+    CONSTRAINT pk_descuento PRIMARY KEY(id)
+    CONSTRAINT ck_porcentaje CHECK (0<porcentaje<100),
+);
+
+CREATE TABLE  review(
+    id          NUMBER(15),
+    usuario     VARCHAR2(50) NOT NULL,
+    articulo    NUMBER(10) NOT NULL,
+    puntuacion  NUMBER(2) NOT NULL,
+    titulo      VARCHAR2(50) NOT NULL,
+    texto       VARCHAR2(500) NOT NULL,
+    meGusta        NUMBER(10)  NOT NULL,
+    refrena     VARCHAR2(50) NOT NULL,
+    CONSTRAINT pk_review PRIMARY KEY(id),
+    CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario),
+    CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo)
+);
