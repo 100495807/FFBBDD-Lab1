@@ -1,11 +1,11 @@
 CREATE TABLE producto (
-    id          NUMBER(15) NOT NULL,
+    id          NUMBER(15) NOT NULL,            --preguntar a javier calle not null en pk
     nombre      VARCHAR2 (50) NOT NULL,
     coffea      VARCHAR2 (50) NOT NULL,
     varietal    VARCHAR2 (50) NOT NULL,
     origen      VARCHAR2 (50) NOT NULL,
     tostado     VARCHAR2 (50) NOT NULL,
-    cafeina     NUMBER (1) NOT NULL, --    si=1, no=0
+    cafeina     NUMBER (1) NOT NULL,            --si=1, no=0
     CONSTRAINT pk_producto PRIMARY KEY (id),
     CONSTRAINT ck_producto CHECK (-1<cafeina<2)
 ) ;
@@ -44,9 +44,9 @@ CREATE TABLE articulo (
     CONSTRAINT pk_articulo PRIMARY KEY(idCodigo),
     CONSTRAINT fk_articulo_cantidad FOREIGN KEY(cantidad) REFERENCES cantidad(id),
     CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(id),
-    CONSTRAINT ck_articulo CHECK (stock>0),
-    CONSTRAINT ck_articulo CHECK (stockMin>0),
-    CONSTRAINT ck_articulo CHECK (stockMax),
+    CONSTRAINT ck_articulo_stock CHECK (stock>0),
+    CONSTRAINT ck_articulo_stockMin CHECK (stockMin>4),
+    CONSTRAINT ck_articulo_stockMax CHECK (stockMax<15),
 );
 
 CREATE TABLE proveedor (
@@ -55,7 +55,7 @@ CREATE TABLE proveedor (
     nombreComercio  VARCHAR2(50),
     correo          VARCHAR2(50),
     telefono        NUMBER(10),
-    tarjetaBanco    VARCHAR2(50),                           --doiwhrijndeuivir
+    tarjetaBanco    VARCHAR2(50),                          
     codPostal       NUMBER(6),
     pais            VARCHAR2(50),
     tiempoMedio     NUMBER(7),
@@ -100,8 +100,8 @@ CREATE TABLE registrado (
     id                  NUMBER(15),
     usuario             VARCHAR2(50),
     password            VARCHAR2(50),           --DUDAAAAAAAAAAAAAAAAAAAAAAA
-    fechaRegistro       NUMBER(7),
-    horaRegistro        NUMBER(7),
+    fechaRegistro       DATE,
+    horaRegistro        TIME,
     preferenciaContacto VARHCAR2(50),
     direccion           NUMBER(7),
     tarjeta             NUMBER(7),
@@ -114,7 +114,7 @@ CREATE TABLE registrado (
 
 CREATE TABLE pedidoCliente (
     id              NUMBER(15) NOT NULL,
-    fecha           NUMBER(10),
+    fecha           DATE,
     direccion       NUMBER(7),
     horaPago        TIME,
     fechaPago       DATE,
@@ -139,7 +139,7 @@ CREATE TABLE pedidoArticuloCliente (
 CREATE TABLE tarjetaCredito (
     numTarjeta      NUMBER(10) NOT NULL,
     titular         VARCHAR2(50),
-    company        VARCHAR2(50),
+    company         VARCHAR2(50),
     caducidad       NUMBER(50),
     CONSTRAINT pk_tarjetaCredito PRIMARY KEY(numTarjeta)
 );
