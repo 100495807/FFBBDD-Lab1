@@ -1,5 +1,5 @@
 CREATE TABLE producto (
-    id          NUMBER(15),            --preguntar a javier calle not null en pk
+    id          NUMBER(15),            
     nombre      VARCHAR2 (50) NOT NULL,
     coffea      VARCHAR2 (50) NOT NULL,
     varietal    VARCHAR2 (50) NOT NULL,
@@ -180,3 +180,11 @@ CREATE TABLE  review(
     CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo),
     CONSTRAINT ck_puntuacion CHECK(puntuacion < 11)
 );
+
+
+--preguntar a javier calle not null en pk, 
+--dominios, numeros negativos, 
+--como se pone los mayeres menores, delete y update
+--como sabes que el pedido ya esta cumplido
+--meter atribudo registrado? en peidoArticuloCliente
+--si borras tarjeta
