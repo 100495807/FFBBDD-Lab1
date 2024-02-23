@@ -94,7 +94,7 @@ CREATE TABLE cliente (
 CREATE TABLE registrado (
     id                  NUMBER(7),
     usuario             VARCHAR2(50),
-    password            VARCHAR2(50),           --DUDAAAAAAAAAAAAAAAAAAAAAAA
+    password            VARCHAR2(50),           --DUDAAAAAAAAAAAAAAAAAAAAAAA(numeros+letras?)
     fechaRegistro       NUMBER(7),
     horaRegistro        NUMBER(7),
     preferenciaContacto VARHCAR2(50),
