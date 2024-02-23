@@ -55,7 +55,7 @@ CREATE TABLE proveedor (
     nombreComercio  VARCHAR2(50),
     correo          VARCHAR2(50),
     telefono        NUMBER(10),
-    tarjetaBanco    VARCHAR2(50),
+    tarjetaBanco    VARCHAR2(50),                           --doiwhrijndeuivir
     codPostal       NUMBER(6),
     pais            VARCHAR2(50),
     tiempoMedio     NUMBER(7),
