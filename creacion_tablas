@@ -177,5 +177,6 @@ CREATE TABLE  review(
     refrena     VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_review PRIMARY KEY(id),
     CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario),
-    CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo)
+    CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo),
+    CONSTRAINT ck_puntuacion CHECK(puntuacion < 11)
 );
