@@ -1,38 +1,40 @@
 CREATE TABLE producto (
-    id          NUMBER(7) NOT NULL,
-    nombre      VARCHAR2 (50),
-    coffea      VARCHAR2 (50),
-    varietal    VARCHAR2 (50),
-    origen      VARCHAR2 (50),
-    tostado     VARCHAR2 (50),
-    cafeina     NUMBER (1), --si=1, no=0
-    CONSTRAINT pk_producto PRIMARY KEY (id)
+    id          NUMBER(15) NOT NULL,
+    nombre      VARCHAR2 (50) NOT NULL,
+    coffea      VARCHAR2 (50) NOT NULL,
+    varietal    VARCHAR2 (50) NOT NULL,
+    origen      VARCHAR2 (50) NOT NULL,
+    tostado     VARCHAR2 (50) NOT NULL,
+    cafeina     NUMBER (1) NOT NULL, --    si=1, no=0
+    CONSTRAINT pk_producto PRIMARY KEY (id),
+    CONSTRAINT ck_producto CHECK (-1<cafeina<2)
 ) ;
 
 CREATE TABLE formato (
-    id          NUMBER(7) NOT NULL,
-    nombre      VARCHAR2(50),
+    id          NUMBER(15) NOT NULL,
+    nombre      VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_formato PRIMARY KEY(id)
 );
 
 CREATE TABLE cantidad (
-    id          NUMBER(7) NOT NULL,
-    cantidad    NUMBER(7),
-    magnitud    VARCHAR2(50),
-    CONSTRAINT pk_cantidad PRIMARY KEY(id)
+    id          NUMBER(15) NOT NULL,
+    cantidad    NUMBER(7) NOT NULL,
+    magnitud    VARCHAR2(50) NOT NULL,
+    CONSTRAINT pk_cantidad PRIMARY KEY(id),
+    CONSTRAINT ck_cantidad CHECK (cantidad>0)
 );
 
 CREATE TABLE formatoProducto (
-    idProducto     NUMBER(7),
-    idFormato      NUMBER(7),
-    idCantidad     NUMBER(7),
+    idProducto     NUMBER(15),
+    idFormato      NUMBER(15),
+    idCantidad     NUMBER(15),
     CONSTRAINT fk_formatoProducto_idProducto FOREIGN KEY(idProducto) REFERENCES producto(id),
     CONSTRAINT fk_formatoProducto_idFormato FOREIGN KEY(idFormato) REFERENCES formato(id),
     CONSTRAINT fk_formatoProducto_idCantidad FOREIGN KEY(idCantidad) REFERENCES cantidad(id)
 );
 
 CREATE TABLE articulo (
-    idCodigo    NUMBER(7) NOT NULL,
+    idCodigo    NUMBER(15) NOT NULL,
     cantidad    NUMBER(7),
     pvp         NUMBER(7),
     stock       NUMBER(7),
@@ -41,30 +43,33 @@ CREATE TABLE articulo (
     stockMax    NUMBER(7),
     CONSTRAINT pk_articulo PRIMARY KEY(idCodigo),
     CONSTRAINT fk_articulo_cantidad FOREIGN KEY(cantidad) REFERENCES cantidad(id),
-    CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(id)
+    CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(id),
+    CONSTRAINT ck_articulo CHECK (stock>0),
+    CONSTRAINT ck_articulo CHECK (stockMin>0),
+    CONSTRAINT ck_articulo CHECK (stockMax),
 );
 
 CREATE TABLE proveedor (
-    id              NUMBER(7) NOT NULL,
+    id              NUMBER(15) NOT NULL,
     cif             NUMBER(9),
     nombreComercio  VARCHAR2(50),
     correo          VARCHAR2(50),
     telefono        NUMBER(10),
-    tarjetaBanco    -DUDA-(++++++++++++++),
+    tarjetaBanco    VARCHAR2(50),
     codPostal       NUMBER(6),
     pais            VARCHAR2(50),
     tiempoMedio     NUMBER(7),
     numPedido       NUMBER(7),
-    CONSTRAINT pk_proveedor PRIMARY KEY(id),
+    CONSTRAINT pk_proveedor PRIMARY KEY(id)
 
 );
 
 CREATE TABLE pedidosProveedor (
-    id                  NUMBER(7) NOT NULL,
+    id                  NUMBER(15) NOT NULL,
     proveedor           VARCHAR2(50),
     cantidadUnidad      NUMBER(7),
-    fecha               NUMBER(11),
-    hora                NUMBER(5),
+    fecha               DATE,
+    hora                TIME,
     estado              VARCHAR(20),
     articulo            NUMBER(7),
     costePedidoTotal    NUMBER(7),
@@ -74,17 +79,17 @@ CREATE TABLE pedidosProveedor (
 );
 
 CREATE TABLE proveedorArticulo (
-    idArticulo      NUMBER(7),
-    idProveedor     NUMBER(7),
-    coste           NUMBER(7),
+    idArticulo      NUMBER(15),
+    idProveedor     NUMBER(15),
+    coste           NUMBER(15),
     CONSTRAINT fk_proveedorArticulo_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
     CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(id),
 );
 
 CREATE TABLE cliente (
-    id          NUMBER(7) NOT NULL,
+    id          NUMBER(15) NOT NULL,
     correo      VARCHAR2(50),
-    telefono    NUMBER(10),
+    telefono    NUMBER(12),
     nombre      VARCHAR2(50),
     apellido1   VARCHAR2(50),
     apellido2   VARCHAR2(50),
@@ -92,9 +97,9 @@ CREATE TABLE cliente (
 );
 
 CREATE TABLE registrado (
-    id                  NUMBER(7),
+    id                  NUMBER(15),
     usuario             VARCHAR2(50),
-    password            VARCHAR2(50),           --DUDAAAAAAAAAAAAAAAAAAAAAAA(numeros+letras?)
+    password            VARCHAR2(50),           --DUDAAAAAAAAAAAAAAAAAAAAAAA
     fechaRegistro       NUMBER(7),
     horaRegistro        NUMBER(7),
     preferenciaContacto VARHCAR2(50),
@@ -108,11 +113,11 @@ CREATE TABLE registrado (
 );
 
 CREATE TABLE pedidoCliente (
-    id              NUMBER(7) NOT NULL,
+    id              NUMBER(15) NOT NULL,
     fecha           NUMBER(10),
     direccion       NUMBER(7),
-    horaPago        NUMBER(5),
-    fechaPago       NUMBER(10),
+    horaPago        TIME,
+    fechaPago       DATE,
     tarjeta         NUMBER(10),
     fechaEntrega    NUMBER(10),
     precioTotal     NUMBER(7),
@@ -122,9 +127,9 @@ CREATE TABLE pedidoCliente (
 );
 
 CREATE TABLE pedidoArticuloCliente (
-    idPedido        NUMBER(7),
-    idArticulo      NUMBER(7),
-    idClienteReg    NUMBER(7),
+    idPedido        NUMBER(15),
+    idArticulo      NUMBER(15),
+    idClienteReg    NUMBER(15),
     cantidad        NUMBER(7),
     CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(idPedido) REFERENCES pedidoCliente(id),
     CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
@@ -140,7 +145,7 @@ CREATE TABLE tarjetaCredito (
 );
 
 CREATE TABLE direccion (
-    id              NUMBER(7) NOT NULL,
+    id              NUMBER(15) NOT NULL,
     tipoVia         VARCHAR2(50),
     nombreVia       VARCHAR2(50),
     numInmueble     NUMBER(3),
@@ -155,17 +160,17 @@ CREATE TABLE direccion (
 );
 
 CREATE TABLE descuento (
-    id          NUMBER(7) NOT NULL,
+    id          NUMBER(15) NOT NULL,
     porcentaje  NUMBER(4),
-    fecha       NUMBER(10),
+    fecha       DATE,
     CONSTRAINT pk_descuento PRIMARY KEY(id)
 );
 
 CREATE TABLE  review(
-    id          NUMBER(7) NOT NULL,
+    id          NUMBER(15) NOT NULL,
     usuario     VARCHAR2(50),
     articulo    NUMBER(7),
-    puntuacion  NUMBER(1),
+    puntuacion  NUMBER(2),
     titulo      VARCHAR2(50),
     texto       VARCHAR2(500),
     like        NUMBER(10),
