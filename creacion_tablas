@@ -27,9 +27,9 @@ CREATE TABLE formatoProducto (
     idProducto     NUMBER(15) NOT NULL,
     idFormato      NUMBER(15) NOT NULL,
     idCantidad     NUMBER(15) NOT NULL,
-    CONSTRAINT fk_formatoProducto_idProducto FOREIGN KEY(idProducto) REFERENCES producto(id),
-    CONSTRAINT fk_formatoProducto_idFormato FOREIGN KEY(idFormato) REFERENCES formato(id),
-    CONSTRAINT fk_formatoProducto_idCantidad FOREIGN KEY(idCantidad) REFERENCES cantidad(id)
+    CONSTRAINT fk_formatoProducto_idProducto FOREIGN KEY(idProducto) REFERENCES producto(id) ON DELETE CASCADE,
+    CONSTRAINT fk_formatoProducto_idFormato FOREIGN KEY(idFormato) REFERENCES formato(id) ON DELETE CASCADE,
+    CONSTRAINT fk_formatoProducto_idCantidad FOREIGN KEY(idCantidad) REFERENCES cantidad(id) ON DELETE CASCADE
 );
 
 CREATE TABLE articulo (
@@ -41,8 +41,8 @@ CREATE TABLE articulo (
     stockMin    NUMBER(2) NOT NULL,
     stockMax    NUMBER(7) NOT NULL,
     CONSTRAINT pk_articulo PRIMARY KEY(idCodigo),
-    CONSTRAINT fk_articulo_cantidad FOREIGN KEY(cantidad) REFERENCES cantidad(id),
-    CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(id),
+    CONSTRAINT fk_articulo_cantidad FOREIGN KEY(cantidad) REFERENCES cantidad(id) ON DELETE CASCADE,
+    CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(id) ON DELETE CASCADE,
     CONSTRAINT ck_articulo_stockMin CHECK (stockMin>4),
     CONSTRAINT ck_articulo_stockMax CHECK (stockMax<15)
 );
@@ -72,16 +72,16 @@ CREATE TABLE pedidosProveedor (
     articulo            NUMBER(7) NOT NULL,
     costePedidoTotal    NUMBER(7) NOT NULL,
     CONSTRAINT pk_pedidosProveedor PRIMARY KEY(id),
-    CONSTRAINT fk_pedidosProveedor_proveedor FOREIGN KEY(proveedor) REFERENCES proveedor(id),
-    CONSTRAINT fk_pedidosProveedor_articulo FOREIGN KEY(articulo) REFERENCES articulo(idCodigo)
+    CONSTRAINT fk_pedidosProveedor_proveedor FOREIGN KEY(proveedor) REFERENCES proveedor(id) ON DELETE SET NULL,
+    CONSTRAINT fk_pedidosProveedor_articulo FOREIGN KEY(articulo) REFERENCES articulo(idCodigo) ON DELETE NO ACTION
 );
 
 CREATE TABLE proveedorArticulo (
     idArticulo      NUMBER(15) NOT NULL,
     idProveedor     NUMBER(15) NOT NULL,
     coste           NUMBER(15) NOT NULL,
-    CONSTRAINT fk_proveedorArticulo_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
-    CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(id),
+    CONSTRAINT fk_proveedorArticulo_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo) ON DELETE CASCADE,
+    CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(id) ON DELETE CASCADE
 );
 
 CREATE TABLE cliente (
@@ -104,10 +104,10 @@ CREATE TABLE registrado (
     direccion           NUMBER(7) NOT NULL,
     tarjeta             NUMBER(7) NOT NULL,
     bonoDescuento       NUMBER(7) NOT NULL,
-    CONSTRAINT fk_registrado_id FOREIGN KEY(id) REFERENCES cliente(id),
-    CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(id),
-    CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta),
-    CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(id)
+    CONSTRAINT fk_registrado_id FOREIGN KEY(id) REFERENCES cliente(id) ON DELETE CASCADE,
+    CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta) ON DELETE RESTRICT,
+    CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(id) ON DELETE NO ACTION
 );
 
 CREATE TABLE pedidoCliente (
@@ -120,8 +120,8 @@ CREATE TABLE pedidoCliente (
     fechaEntrega    NUMBER(10) NOT NULL,
     precioTotal     NUMBER(7) NOT NULL,
     CONSTRAINT pk_pedidoCliente PRIMARY KEY(id),
-    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(id),
-    CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta)
+    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(id) ON DELETE NO ACTION,
+    CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta) ON DELETE NO ACTION
 );
 
 CREATE TABLE pedidoArticuloCliente (
@@ -129,9 +129,9 @@ CREATE TABLE pedidoArticuloCliente (
     idArticulo      NUMBER(15) NOT NULL,
     idClienteReg    NUMBER(15) NOT NULL,
     cantidad        NUMBER(7) NOT NULL,
-    CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(idPedido) REFERENCES pedidoCliente(id),
-    CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
-    CONSTRAINT fk_pedidoArticuloCliente_idClienteReg FOREIGN KEY(idClienteReg) REFERENCES cliente(id)
+    CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(idPedido) REFERENCES pedidoCliente(id) ON DELETE NO ACTION,
+    CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo) ON DELETE NO ACTION,
+    CONSTRAINT fk_pedidoArticuloCliente_idClienteReg FOREIGN KEY(idClienteReg) REFERENCES cliente(id) ON DELETE NO ACTION
 );
 
 CREATE TABLE tarjetaCredito (
@@ -176,13 +176,13 @@ CREATE TABLE  review(
     meGusta        NUMBER(10)  NOT NULL,
     refrena     VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_review PRIMARY KEY(id),
-    CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario),
-    CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo),
+    CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET DEFAULT,
+    CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo) ON DELETE CASCADE,
     CONSTRAINT ck_puntuacion CHECK(puntuacion < 11)
 );
 
 
---preguntar a javier calle not null en pk, 
+--preguntar a Javier Calle not null en pk, 
 --dominios, numeros negativos, 
 --como se pone los mayeres menores, delete y update
 --como sabes que el pedido ya esta cumplido
