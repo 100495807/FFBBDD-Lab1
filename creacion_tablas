@@ -1,3 +1,23 @@
+DROP TABLE review;
+DROP TABLE descuento;
+DROP TABLE direccion;
+DROP TABLE tarjetaCredito;
+DROP TABLE pedidoArticuloCliente;
+DROP TABLE pedidoCliente;
+DROP TABLE registrado;
+DROP TABLE cliente;
+DROP TABLE proveedorArticulo;
+DROP TABLE pedidosProveedor;
+DROP TABLE proveedor;
+DROP TABLE articulo;
+DROP TABLE formatoProducto;
+DROP TABLE cantidad;
+DROP TABLE formato;
+DROP TABLE producto;
+
+
+
+
 CREATE TABLE producto (
     id          NUMBER(15),            
     nombre      VARCHAR2 (50) NOT NULL,
@@ -7,7 +27,8 @@ CREATE TABLE producto (
     tostado     VARCHAR2 (50) NOT NULL,
     cafeina     NUMBER (1) NOT NULL,            --si=1, no=0
     CONSTRAINT pk_producto PRIMARY KEY (id),
-    CONSTRAINT ck_producto CHECK (cafeina<2)
+    CONSTRAINT ck_producto_cafeina CHECK (cafeina IN (0,1)),
+    CONSTRAINT ck_producto_tostado CHECK (tostado IN ('natural', 'torrefacto', 'mezcla'))
 ) ;
 
 CREATE TABLE formato (
@@ -43,7 +64,7 @@ CREATE TABLE articulo (
     CONSTRAINT pk_articulo PRIMARY KEY(idCodigo),
     CONSTRAINT fk_articulo_cantidad FOREIGN KEY(cantidad) REFERENCES cantidad(id) ON DELETE CASCADE,
     CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(id) ON DELETE CASCADE,
-    CONSTRAINT ck_articulo_stockMin CHECK (stockMin>4),
+    CONSTRAINT ck_articulo_stockMin CHECK (stockMin>5),
     CONSTRAINT ck_articulo_stockMax CHECK (stockMax<15)
 );
 
@@ -73,7 +94,8 @@ CREATE TABLE pedidosProveedor (
     costePedidoTotal    NUMBER(7) NOT NULL,
     CONSTRAINT pk_pedidosProveedor PRIMARY KEY(id),
     CONSTRAINT fk_pedidosProveedor_proveedor FOREIGN KEY(proveedor) REFERENCES proveedor(id) ON DELETE SET NULL,
-    CONSTRAINT fk_pedidosProveedor_articulo FOREIGN KEY(articulo) REFERENCES articulo(idCodigo) ON DELETE NO ACTION
+    CONSTRAINT fk_pedidosProveedor_articulo FOREIGN KEY(articulo) REFERENCES articulo(idCodigo), --oracle no poner nada es DNA o UNA
+    CONSTRAINT ck_pedidosProveedor_estado CHECK (estado IN ('draft', 'placed', 'fulfilled'))
 );
 
 CREATE TABLE proveedorArticulo (
@@ -97,7 +119,7 @@ CREATE TABLE cliente (
 CREATE TABLE registrado (
     id                  NUMBER(15),
     usuario             VARCHAR2(50) NOT NULL,
-    password            VARCHAR2(50) NOT NULL,           --DUDAAAAAAAAAAAAAAAAAAAAAAA
+    password            VARCHAR2(50) NOT NULL,         
     fechaRegistro       DATE NOT NULL,
     horaRegistro        TIME NOT NULL,
     preferenciaContacto VARCHAR2(50) NOT NULL,
@@ -105,9 +127,11 @@ CREATE TABLE registrado (
     tarjeta             NUMBER(7) NOT NULL,
     bonoDescuento       NUMBER(7) NOT NULL,
     CONSTRAINT fk_registrado_id FOREIGN KEY(id) REFERENCES cliente(id) ON DELETE CASCADE,
-    CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta) ON DELETE RESTRICT,
-    CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(id) ON DELETE NO ACTION
+    CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(id), --seria restrcit pero no existe en oracle
+    CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta), --seria restrcit pero no existe en oracle
+    CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(id),
+    CONSTRAINT ck_registrado_preferenciaContacto 
+    CHECK (preferenciaContacto IN ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram'))
 );
 
 CREATE TABLE pedidoCliente (
@@ -120,8 +144,8 @@ CREATE TABLE pedidoCliente (
     fechaEntrega    NUMBER(10) NOT NULL,
     precioTotal     NUMBER(7) NOT NULL,
     CONSTRAINT pk_pedidoCliente PRIMARY KEY(id),
-    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(id) ON DELETE NO ACTION,
-    CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta) ON DELETE NO ACTION
+    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(id),
+    CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta)
 );
 
 CREATE TABLE pedidoArticuloCliente (
@@ -129,9 +153,10 @@ CREATE TABLE pedidoArticuloCliente (
     idArticulo      NUMBER(15) NOT NULL,
     idClienteReg    NUMBER(15) NOT NULL,
     cantidad        NUMBER(7) NOT NULL,
-    CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(idPedido) REFERENCES pedidoCliente(id) ON DELETE NO ACTION,
-    CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo) ON DELETE NO ACTION,
-    CONSTRAINT fk_pedidoArticuloCliente_idClienteReg FOREIGN KEY(idClienteReg) REFERENCES cliente(id) ON DELETE NO ACTION
+    cliente_reg     VARCHAR2(50) NOT NULL
+    CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(idPedido) REFERENCES pedidoCliente(id),
+    CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
+    CONSTRAINT fk_pedidoArticuloCliente_idClienteReg FOREIGN KEY(idClienteReg) REFERENCES cliente(id)
 );
 
 CREATE TABLE tarjetaCredito (
@@ -174,11 +199,12 @@ CREATE TABLE  review(
     titulo      VARCHAR2(50) NOT NULL,
     texto       VARCHAR2(500) NOT NULL,
     meGusta        NUMBER(10)  NOT NULL,
-    refrena     VARCHAR2(50) NOT NULL,
+    refrena     VARCHAR2(1) NOT NULL,
     CONSTRAINT pk_review PRIMARY KEY(id),
-    CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET DEFAULT,
+    CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET NULL, --seria SET DEAFUALT pero no existe en oracle
     CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo) ON DELETE CASCADE,
     CONSTRAINT ck_puntuacion CHECK(puntuacion < 11)
+    CONSTRAINT ck_refrenda
 );
 
 
@@ -188,3 +214,4 @@ CREATE TABLE  review(
 --como sabes que el pedido ya esta cumplido
 --meter atribudo registrado? en peidoArticuloCliente
 --si borras tarjeta
+--que pasa con los updates
