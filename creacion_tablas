@@ -34,7 +34,9 @@ CREATE TABLE producto (
 CREATE TABLE formato (
     id          NUMBER(15),
     nombre      VARCHAR2(50) NOT NULL,
-    CONSTRAINT pk_formato PRIMARY KEY(id)
+    CONSTRAINT pk_formato PRIMARY KEY(id),
+    CONSTRAINT ck_formato                   --PONER TILDE EN CAPSULA 
+    CHECK (nombre IN ('grano crudo', 'grano tostado', 'molido', 'liofilizado', 'capsula', 'preparado'))
 );
 
 CREATE TABLE cantidad (
