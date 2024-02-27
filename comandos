@@ -10,3 +10,5 @@ CREATE TABLE nombre (
 --VER TABLA                 DESC nombre;
 --VER TODAS LAS TABLAS      SELECT table_name FROM USER_TABLES;     Poner eso literal
 --LIMPIAL PANTALLA          cl scr
+--select product from fsdb.catalogue where product='Sereno';  
+--select distinct product from fsdb.catalogue where product='Sereno';  
