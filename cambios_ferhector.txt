@@ -209,12 +209,12 @@ CREATE TABLE  review(
     titulo      VARCHAR2(50) NOT NULL,
     texto       VARCHAR2(500) NOT NULL,
     meGusta        NUMBER(10)  NOT NULL,
-    refrena     VARCHAR2(1) NOT NULL,
+    refrenda     VARCHAR2(4) NOT NULL,
     CONSTRAINT pk_review PRIMARY KEY(id),
     CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET NULL, --seria SET DEAFUALT pero no existe en oracle
     CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo) ON DELETE CASCADE,
-    CONSTRAINT ck_puntuacion CHECK(puntuacion < 11)
-    CONSTRAINT ck_refrenda
+    CONSTRAINT ck_puntuacion CHECK(0<puntuacion<6)
+    CONSTRAINT ck_refrenda CHECK refrenda IN('yes','no')
 );
 
 
