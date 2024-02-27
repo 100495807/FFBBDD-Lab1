@@ -28,9 +28,9 @@
 
  Nombre                                    ?Nulo?   Tipo
  ----------------------------------------- -------- ----------------------------
- ORDERDATE                                          CHAR(14)                    //  
- ORDERTIME                                          CHAR(14)
- PRODUCT                                            CHAR(50)
+ ORDERDATE                                          CHAR(14)                    //pedidosProveedor(fecha)  
+ ORDERTIME                                          CHAR(14)                    //pedidosProveedor(hora)
+ PRODUCT                                            CHAR(50)                    //
  BARCODE                                            CHAR(15)
  PRODTYPE                                           CHAR(20)
  COFFEA                                             CHAR(20)
