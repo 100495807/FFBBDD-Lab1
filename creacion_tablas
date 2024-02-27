@@ -81,10 +81,10 @@ CREATE TABLE proveedor (
     tiempoMedio     NUMBER(7) NOT NULL,
     numPedido       NUMBER(7) NOT NULL,
     CONSTRAINT pk_proveedor PRIMARY KEY(id)
-    CONSTRAINT uk_proveedor_nombreComercio UNIQUE(nombreComercio)
-    CONSTRAINT uk_proveedor_correo UNIQUE(correo)
-    CONSTRAINT uk_proveedor_telefono UNIQUE(telefono)
-    CONSTRAINT uk_proveedor_CuentaBanco UNIQUE(CuentaBanco)
+    CONSTRAINT uk_proveedor_nombreComercio UNIQUE(nombreComercio),
+    CONSTRAINT uk_proveedor_correo UNIQUE(correo),
+    CONSTRAINT uk_proveedor_telefono UNIQUE(telefono),
+    CONSTRAINT uk_proveedor_CuentaBanco UNIQUE(CuentaBanco),
     CONSTRAINT uk_proveedor_Direccion_Postal UNIQUE(DireccionPostal)
 
 
@@ -121,9 +121,10 @@ CREATE TABLE cliente (
     nombre      VARCHAR2(50) NOT NULL,
     apellido1   VARCHAR2(50) NOT NULL,
     apellido2   VARCHAR2(50),
-    CONSTRAINT pk_cliente PRIMARY KEY(id)
-    CONSTRAINT uk_cliente_correo UNIQUE(correo)
-    CONSTRAINT uk_cliente_telefono UNIQUE(telefono)
+    CONSTRAINT pk_cliente PRIMARY KEY(id),
+    CONSTRAINT uk_cliente_correo UNIQUE(correo),
+    CONSTRAINT uk_cliente_telefono UNIQUE(telefono),
+    CONSTRAINT ck_cliente_correOtel CHECK(correo NOT NULL or telefono NOT NULL)
 );
 
 CREATE TABLE registrado (
@@ -140,7 +141,7 @@ CREATE TABLE registrado (
     CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(id), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(id),
-    CONSTRAINT ck_registrado_preferenciaContacto CHECK (preferenciaContacto IN ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram'))
+    CONSTRAINT ck_registrado_preferenciaContacto CHECK (preferenciaContacto IN ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram')),
     CONSTRAINT uk_registrado_usuario UNIQUE(usuario)
 );
 
@@ -197,8 +198,8 @@ CREATE TABLE descuento (
     id          NUMBER(15),
     porcentaje  NUMBER(4)  NOT NULL,
     fecha       DATE NOT NULL,
-    CONSTRAINT pk_descuento PRIMARY KEY(id)
-    CONSTRAINT ck_porcentaje CHECK (0<porcentaje<100),
+    CONSTRAINT pk_descuento PRIMARY KEY(id),
+    CONSTRAINT ck_porcentaje CHECK (0<porcentaje<100)
 );
 
 CREATE TABLE  review(
@@ -213,7 +214,7 @@ CREATE TABLE  review(
     CONSTRAINT pk_review PRIMARY KEY(id),
     CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET NULL, --seria SET DEAFUALT pero no existe en oracle
     CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo) ON DELETE CASCADE,
-    CONSTRAINT ck_puntuacion CHECK(0<puntuacion<6)
+    CONSTRAINT ck_puntuacion CHECK(0<puntuacion<6),
     CONSTRAINT ck_refrenda CHECK refrenda IN('yes','no')
 );
 
