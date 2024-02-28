@@ -56,7 +56,7 @@ CREATE TABLE formatoProducto (
 );
 
 CREATE TABLE articulo (
-    idCodigo    VARCHAR2(50),
+    idCodigo    CHAR(15),
     packaging   VARCHAR(50) NOT NULL,
     cantidad    VARCHAR2(50) NOT NULL,
     magnitud    VARCHAR2(50) NOT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE pedidosProveedor (
 
 CREATE TABLE proveedorArticulo (
     idArticulo      VARCHAR2(50) NOT NULL,
-    idProveedor     VARCHAR2(50) NOT NULL,
+    idProveedor     CHAR(10) NOT NULL,
     coste           VARCHAR2(50) NOT NULL,
     CONSTRAINT fk_proveedorArticulo_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo) ON DELETE CASCADE,
     CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(cif) ON DELETE CASCADE
@@ -142,7 +142,6 @@ CREATE TABLE descuento (
     porcentaje  VARCHAR(50)  NOT NULL,
     fecha       VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_descuento PRIMARY KEY(idUsuario),
-    CONSTRAINT fk_idUsuario FOREIGN KEY(idUsuario) REFERENCES registrado(usuario),
     CONSTRAINT ck_porcentaje CHECK (porcentaje BETWEEN 0 AND 100)
 );
 
@@ -151,16 +150,24 @@ CREATE TABLE registrado (
     contrasena            VARCHAR2(50) NOT NULL,         
     fechaHoraRegistro     DATE NOT NULL,
     preferenciaContacto VARCHAR2(50) NOT NULL,
-    direccion           VARCHAR2(50) NOT NULL,
     tarjeta             VARCHAR2(50) NOT NULL,
     bonoDescuento       VARCHAR2(50) NOT NULL,
+    tipoVia         VARCHAR2(50) NOT NULL,
+    nombreVia       VARCHAR2(50) NOT NULL,
+    numInmueble     VARCHAR2(3) NOT NULL,
+    numBloque       VARCHAR2(3),
+    escalera        VARCHAR2(50),
+    piso            VARCHAR2(2),
+    puerta          VARCHAR2(2),
+    codigoPostal    VARCHAR2(50) NOT NULL,
+    ciudad          VARCHAR2(50) NOT NULL,
+    pais            VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_registrado_usuario PRIMARY KEY(usuario),
-    CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais), --seria restrcit pero no existe en oracle
+    CONSTRAINT fk_registrado_direccion FOREIGN KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(idUsuario),
     CONSTRAINT ck_registrado_preferenciaContacto CHECK (preferenciaContacto IN 
-    ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram')),
-    CONSTRAINT uk_registrado_usuario UNIQUE(usuario)
+    ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram'))
 );
 
 
@@ -171,14 +178,23 @@ CREATE TABLE pedidoCliente (
     apellido1       VARCHAR2(50) NOT NULL,
     apellido2       VARCHAR2(50),
     fecha           DATE NOT NULL,
-    direccion       VARCHAR2(50) NOT NULL,
     fechaHoraPago   DATE NOT NULL,
     tarjeta         VARCHAR2(50) NOT NULL,
     fechaHoraEntrega  DATE NOT NULL,
     precioTotal     VARCHAR2(50) NOT NULL,
     tipoPago        VARCHAR2(50) NOT NULL,
+    tipoVia         VARCHAR2(50) NOT NULL,
+    nombreVia       VARCHAR2(50) NOT NULL,
+    numInmueble     VARCHAR2(3) NOT NULL,
+    numBloque       VARCHAR2(3),
+    escalera        VARCHAR2(50),
+    piso            VARCHAR2(2),
+    puerta          VARCHAR2(2),
+    codigoPostal    VARCHAR2(50) NOT NULL,
+    ciudad          VARCHAR2(50) NOT NULL,
+    pais            VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_pedidoCliente PRIMARY KEY(correo, telefono),
-    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais),
+    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais),
     CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta),
     CONSTRAINT uk_cliente_correo UNIQUE(correo),
     CONSTRAINT uk_cliente_telefono UNIQUE(telefono),
@@ -186,11 +202,12 @@ CREATE TABLE pedidoCliente (
 );
 
 CREATE TABLE pedidoArticuloCliente (
-    idPedido        VARCHAR2(50) NOT NULL,
     idArticulo      VARCHAR2(50) NOT NULL,
     idClienteReg    VARCHAR2(50),
     cantidad        VARCHAR2(50) NOT NULL,
-    CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(idPedido) REFERENCES pedidoCliente(correo, telefono),
+    correo         VARCHAR2(50),
+    telefono        VARCHAR2(50),
+    CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(correo, telefono) REFERENCES pedidoCliente(correo, telefono),
     CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
     CONSTRAINT fk_pedidoArticuloCliente_idClienteReg FOREIGN KEY(idClienteReg) REFERENCES registrado(usuario)
 );
