@@ -1,4 +1,4 @@
-INSERT INTO producto (nombre, coffea, varietal, origen, tostado, cafeina)
+INSERT INTO producto (id, nombre, coffea, varietal, origen, tostado, cafeina)
 SELECT DISTINCT
     product as nombre,
     coffea,
@@ -8,11 +8,33 @@ SELECT DISTINCT
     decaf as cafeina
 FROM fsdb.catalogue
 WHERE
-    product IS NOT NULL
+    id = rownum
+    AND product IS NOT NULL
     AND coffea IS NOT NULL
     AND varietal IS NOT NULL
     AND origin IS NOT NULL
     AND roasting IS NOT NULL
     AND decaf IS NOT NULL;
+
+
+
+INSERT INTO formato(id, nombre)
+    SELECT DISTINCT
+        --id
+        format as nombre
+FROM fsdb.catalogue
+WHERE
+    nombre is not null;
+
+
+INSERT INTO cantidad(id, cantidad, magnitud, packaging)
+    SELECT DISTINCT
+        --id
+        TO_NUMBER(REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 2)) AS Cantidad,
+        REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 3) AS Magnitud,
+        REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 1) AS Packaging
+FROM fsdb.catalogue
+WHERE
+    nombre is not null;
 
 
