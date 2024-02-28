@@ -141,7 +141,8 @@ CREATE TABLE registrado (
     CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(id), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(id),
-    CONSTRAINT ck_registrado_preferenciaContacto CHECK (preferenciaContacto IN ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram')),
+    CONSTRAINT ck_registrado_preferenciaContacto CHECK (preferenciaContacto IN 
+    ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram')),
     CONSTRAINT uk_registrado_usuario UNIQUE(usuario)
 );
 
@@ -199,7 +200,7 @@ CREATE TABLE descuento (
     porcentaje  NUMBER(4)  NOT NULL,
     fecha       DATE NOT NULL,
     CONSTRAINT pk_descuento PRIMARY KEY(id),
-    CONSTRAINT ck_porcentaje CHECK (0<porcentaje<100)
+    CONSTRAINT ck_porcentaje CHECK (porcentaje BETWEEN 0 AND 100)
 );
 
 CREATE TABLE  review(
@@ -214,7 +215,7 @@ CREATE TABLE  review(
     CONSTRAINT pk_review PRIMARY KEY(id),
     CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET NULL, --seria SET DEAFUALT pero no existe en oracle
     CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idArticulo) ON DELETE CASCADE,
-    CONSTRAINT ck_puntuacion CHECK(0<puntuacion<6),
+    CONSTRAINT ck_puntuacion CHECK(puntuacion BETWEEN 0 A 10),
     CONSTRAINT ck_refrenda CHECK refrenda IN('yes','no')
 );
 
