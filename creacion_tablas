@@ -1,10 +1,10 @@
 DROP TABLE review;
-DROP TABLE descuento;
-DROP TABLE direccion;
-DROP TABLE tarjetaCredito;
 DROP TABLE pedidoArticuloCliente;
 DROP TABLE pedidoCliente;
 DROP TABLE registrado;
+DROP TABLE descuento;
+DROP TABLE tarjetaCredito;
+DROP TABLE direccion;
 DROP TABLE cliente;
 DROP TABLE proveedorArticulo;
 DROP TABLE pedidosProveedor;
@@ -14,6 +14,7 @@ DROP TABLE formatoProducto;
 DROP TABLE cantidad;
 DROP TABLE formato;
 DROP TABLE producto;
+
 
 
 
@@ -40,6 +41,7 @@ CREATE TABLE cantidad (
     id          NUMBER(15),
     cantidad    NUMBER(7) NOT NULL,
     magnitud    VARCHAR2(50) NOT NULL,
+    packaging   VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_cantidad PRIMARY KEY(id)
 );
 
@@ -78,6 +80,7 @@ CREATE TABLE proveedor (
     pais            VARCHAR2(50) NOT NULL,
     tiempoMedio     NUMBER(7) NOT NULL,
     numPedido       NUMBER(7) NOT NULL,
+    persona         VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_proveedor PRIMARY KEY(id),
     CONSTRAINT uk_proveedor_nombreComercio UNIQUE (nombreComercio),
     CONSTRAINT uk_proveedor_correo UNIQUE (correo),
@@ -90,8 +93,8 @@ CREATE TABLE pedidosProveedor (
     id                  NUMBER(15), 
     proveedor           NUMBER(15) NOT NULL,
     cantidadUnidad      NUMBER(7) NOT NULL,
-    fecha               DATE NOT NULL,
-    hora                TIMESTAMP NOT NULL,
+    fecha               VARCHAR2(50) NOT NULL,
+    hora                VARCHAR2(50) NOT NULL,
     estado              VARCHAR(20) NOT NULL,
     articulo            NUMBER(7) NOT NULL,
     costePedidoTotal    NUMBER(7) NOT NULL,
@@ -128,7 +131,7 @@ CREATE TABLE direccion (
     nombreVia       VARCHAR2(50) NOT NULL,
     numInmueble     NUMBER(3) NOT NULL,
     numBloque       NUMBER(3),
-    escalera        VARCHAR(50),
+    escalera        VARCHAR2(50),
     piso            NUMBER(3),
     puerta          VARCHAR2(1),
     codigoPostal    NUMBER(5) NOT NULL,
@@ -149,7 +152,7 @@ CREATE TABLE tarjetaCredito (
 CREATE TABLE descuento (
     id          NUMBER(15),
     porcentaje  NUMBER(4)  NOT NULL,
-    fecha       DATE NOT NULL,
+    fecha       VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_descuento PRIMARY KEY(id),
     CONSTRAINT ck_porcentaje CHECK (porcentaje BETWEEN 0 AND 100)
 );
@@ -158,8 +161,8 @@ CREATE TABLE registrado (
     id                  NUMBER(15),
     usuario             VARCHAR2(50) NOT NULL,
     password            VARCHAR2(50) NOT NULL,         
-    fechaRegistro       DATE NOT NULL,
-    horaRegistro        TIMESTAMP NOT NULL,
+    fechaRegistro       VARCHAR2(50) NOT NULL,
+    horaRegistro        VARCHAR2(50) NOT NULL,
     preferenciaContacto VARCHAR2(50) NOT NULL,
     direccion           NUMBER(7) NOT NULL,
     tarjeta             NUMBER(7) NOT NULL,
@@ -178,11 +181,13 @@ CREATE TABLE pedidoCliente (
     id              NUMBER(15),
     fecha           DATE NOT NULL,
     direccion       NUMBER(7) NOT NULL,
-    horaPago        TIMESTAMP NOT NULL,
-    fechaPago       DATE NOT NULL,
+    horaPago        VARCHAR2(50) NOT NULL,
+    fechaPago       VARCHAR2(50) NOT NULL,
     tarjeta         NUMBER(10) NOT NULL,
-    fechaEntrega    NUMBER(10) NOT NULL,
+    fechaEntrega    VARCHAR2(50) NOT NULL,
+    horaEntrega     VARCHAR2(50) NOT NULL,
     precioTotal     NUMBER(7) NOT NULL,
+    tipoPago        VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_pedidoCliente PRIMARY KEY(id),
     CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(id),
     CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta)
@@ -210,6 +215,8 @@ CREATE TABLE  review(
     texto       VARCHAR2(500) NOT NULL,
     meGusta        NUMBER(10)  NOT NULL,
     refrenda     VARCHAR2(4) NOT NULL,
+    fecha       VARCHAR2(50) NOT NULL,
+    hora        VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_review PRIMARY KEY(id),
     CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET NULL, --seria SET DEAFUALT pero no existe en oracle
     CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idCodigo) ON DELETE CASCADE,
