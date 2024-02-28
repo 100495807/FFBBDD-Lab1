@@ -35,7 +35,7 @@ CREATE TABLE formato (
     id          NUMBER(15),
     nombre      VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_formato PRIMARY KEY(id),
-    CONSTRAINT ck_formato CHECK (nombre IN ('grano crudo', 'grano tostado', 'molido', 'liofilizado', 'capsula', 'preparado'))--PONER TILDE EN CAPSULA
+    CONSTRAINT ck_formato CHECK (nombre IN ('raw bean', 'roasted bean', 'ground', 'freeze-dried', 'capsules', 'prepared'))--PONER TILDE EN CAPSULA
 );
 CREATE TABLE cantidad (
     id          NUMBER(15),
