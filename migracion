@@ -1,0 +1,16 @@
+INSERT INTO producto (nombre, coffea, varietal, origen, tostado, cafeina)
+SELECT DISTINCT
+    product as nombre,
+    coffea,
+    varietal,
+    origin as origen,
+    roasting as tostado,
+    decaf as cafeina
+FROM fsdb.catalogue
+WHERE
+    product IS NOT NULL
+    AND coffea IS NOT NULL
+    AND varietal IS NOT NULL
+    AND origin IS NOT NULL
+    AND roasting IS NOT NULL
+    AND decaf IS NOT NULL;
