@@ -154,7 +154,7 @@ WHERE
     AND client_mobile IS NOT NULL;
 
 
-INSERT INTO direcciones(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
+INSERT INTO direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
     SELECT DISTINCT
         bill_waytype as tipoVia,
         bill_wayname as nombreVia,
@@ -201,3 +201,117 @@ WHERE
     AND dliv_town IS NOT NULL
     AND dliv_country IS NOT NULL;
 
+
+INSERT INTO tarjetaCredito(compañia, numTarjeta, titular, caducidadMes, caducidadYear)
+    SELECT DISTINCT
+        card_company as compañia,
+        card_number as numTarjeta,
+        card_holder as titular,
+        card_expiratn as caducidadMes,
+        card_expiratn as caducidadYear
+        
+FROM fsdb.trolley
+WHERE
+    card_company IS NOT NULL
+    AND card_number IS NOT NULL
+    AND card_holder IS NOT NULL
+    AND card_expiratn IS NOT NULL;
+
+
+INSERT INTO descuento(porcentaje)
+    SELECT DISTINCT
+        discount as porcentaje
+        
+FROM fsdb.trolley
+WHERE
+    discount IS NOT NULL;
+
+
+INSERT INTO registrado(usuario, fechaRegistro, horaRegistro, contrasena)
+    SELECT DISTINCT
+        username as usuario,
+        reg_date as fechaEntrega,
+        reg_time as horaRegistro,
+        user_passw as contrasena
+        
+FROM fsdb.trolley
+WHERE
+    username IS NOT NULL
+    AND reg_date IS NOT NULL
+    AND reg_time IS NOT NULL
+    AND user_passw IS NOT NULL;
+
+
+INSERT INTO pedidoCliente(tipoPago, fechaPago, horaPago, fechaEntrega, horaEntrega)
+    SELECT DISTINCT
+        payment_type as tipoPago,
+        payment_date as fechaEntrega,
+        payment_time as horaPago,
+        dliv_date as fechaEntrega,
+        dliv_time as horaEntrega
+        
+FROM fsdb.trolley
+WHERE
+    payment_type IS NOT NULL
+    AND payment_date IS NOT NULL
+    AND payment_time IS NOT NULL
+    AND dliv_date IS NOT NULL
+    AND dliv_time IS NOT NULL;
+
+
+
+INSERT INTO pedidoArticuloCliente(cantidad)
+    SELECT DISTINCT
+        quantity as cantidad
+        
+FROM fsdb.trolley
+WHERE
+    quantity IS NOT NULL;
+
+
+INSERT INTO producto(nombre)
+    SELECT DISTINCT
+        product as nombre
+        
+FROM fsdb.posts
+WHERE
+    product IS NOT NULL;
+
+
+INSERT INTO articulo(idCodigo)
+    SELECT DISTINCT
+        barcode as idCodigo
+        
+FROM fsdb.posts
+WHERE
+    barcode IS NOT NULL;
+
+
+INSERT INTO registrado(usuario)
+    SELECT DISTINCT
+        username as usuario
+        
+FROM fsdb.posts
+WHERE
+    username IS NOT NULL;
+
+
+INSERT INTO review(fecha, hora, titulo, texto, puntuacion, meGusta, refrenda)
+    SELECT DISTINCT
+        post_date as fecha,
+        post_time as hora,
+        title as titulo,
+        text as texto,
+        score as puntuacion,
+        likes as meGusta,
+        endorsed as refrenda
+        
+FROM fsdb.posts
+WHERE
+    post_date IS NOT NULL
+    AND post_time IS NOT NULL
+    AND title IS NOT NULL
+    AND text IS NOT NULL
+    AND score IS NOT NULL
+    AND likes IS NOT NULL
+    AND endorsed IS NOT NULL;
