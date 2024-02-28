@@ -1,20 +1,30 @@
-INSERT INTO producto (id, nombre, coffea, varietal, origen, tostado, cafeina)
+INSERT INTO producto (nombre, coffea, varietal, origen, tostado, cafeina)
 SELECT DISTINCT
-    product as nombre,
-    coffea,
-    varietal,
+    product as nombre, 
+    coffea, 
+    varietal, 
     origin as origen,
-    roasting as tostado,
+    roasting as tostado,           --he tenido que modifica en la otra tabla de varchar a char osea como estaba en la antigua  pero creo que no debemos hacer eso
     decaf as cafeina
-FROM fsdb.catalogue
-WHERE
-    id = rownum
-    AND product IS NOT NULL
-    AND coffea IS NOT NULL
+FROM fsdb.catalogue WHERE
+    product IS NOT NULL 
+    AND coffea IS NOT NULL 
     AND varietal IS NOT NULL
-    AND origin IS NOT NULL
-    AND roasting IS NOT NULL
+    AND origin IS NOT NULL  
+    AND roasting IS NOT NULL 
     AND decaf IS NOT NULL;
+
+INSERT INTO formatoProducto(idProducto, idFormato, packaging, cantidad, magnitud)
+SELECT DISTINCT
+    product as idProducto,
+    format as idFormato,
+    SUBSTR(packaging, 1, INSTR(packaging, ' ') - 1) AS packaging,                                      --estas 3 de packaging dan erros
+    SUBSTR(packaging, INSTR(packaging, ' ') + 1, INSTR(packaging, ' ', 1, 2) - INSTR(packaging, ' ') - 1) AS cantidad,
+    SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) + 1) AS magnitud
+FROM fsdb.catalogue WHERE
+    product IS NOT NULL
+    AND format IS NOT NULL 
+    AND packaging IS NOT NULL;
 
 
 
