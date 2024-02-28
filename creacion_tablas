@@ -36,6 +36,7 @@ CREATE TABLE formato (
     CONSTRAINT pk_formato PRIMARY KEY(nombre),
     CONSTRAINT ck_formato CHECK (nombre IN ('raw bean', 'roasted bean', 'ground', 'freeze-dried', 'capsules', 'prepared'))--PONER TILDE EN CAPSULA
 );
+
 CREATE TABLE cantidad (
     packaging   VARCHAR2(50),
     cantidad    VARCHAR2(50),
@@ -46,22 +47,26 @@ CREATE TABLE cantidad (
 CREATE TABLE formatoProducto (
     idProducto     VARCHAR2(50) NOT NULL,
     idFormato      VARCHAR2(50) NOT NULL,
-    idCantidad     VARCHAR2(50) NOT NULL,
+    packaging     VARCHAR2(50) NOT NULL,
+    cantidad       VARCHAR2(50) NOT NULL,
+    magnitud        VARCHAR2(50) NOT NULL,
     CONSTRAINT fk_formatoProducto_idProducto FOREIGN KEY(idProducto) REFERENCES producto(nombre) ON DELETE CASCADE,
     CONSTRAINT fk_formatoProducto_idFormato FOREIGN KEY(idFormato) REFERENCES formato(nombre) ON DELETE CASCADE,
-    CONSTRAINT fk_formatoProducto_idCantidad FOREIGN KEY(idCantidad) REFERENCES cantidad(packaging, cantidad, magnitud) ON DELETE CASCADE
+    CONSTRAINT fk_formatoProducto_cantidad FOREIGN KEY(packaging, cantidad, magnitud) REFERENCES cantidad(packaging, cantidad, magnitud) ON DELETE CASCADE
 );
 
 CREATE TABLE articulo (
     idCodigo    VARCHAR2(50),
+    packaging   VARCHAR(50) NOT NULL,
     cantidad    VARCHAR2(50) NOT NULL,
+    magnitud    VARCHAR2(50) NOT NULL,
     pvp         VARCHAR2(50) NOT NULL,
-    stock       VARCHAR2(50) NOT NULL,
+    stock       NUMBER(6) NOT NULL,
     producto    VARCHAR2(50) NOT NULL,
-    stockMin    VARCHAR2(50) NOT NULL,
-    stockMax    VARCHAR2(50) NOT NULL,
+    stockMin    NUMBER(6) NOT NULL,
+    stockMax    NUMBER(6) NOT NULL,
     CONSTRAINT pk_articulo PRIMARY KEY(idCodigo),
-    CONSTRAINT fk_articulo_cantidad FOREIGN KEY(cantidad) REFERENCES cantidad(packaging, cantidad, magnitud) ON DELETE CASCADE,
+    CONSTRAINT fk_articulo_cantidad FOREIGN KEY(packaging, cantidad, magnitud) REFERENCES cantidad(packaging, cantidad, magnitud) ON DELETE CASCADE,
     CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(nombre) ON DELETE CASCADE,
     CONSTRAINT ck_articulo_stockMin CHECK (stockMin>5),
     CONSTRAINT ck_articulo_stockMax CHECK (stockMax<15)
@@ -87,7 +92,7 @@ CREATE TABLE proveedor (
 );
 
 CREATE TABLE pedidosProveedor ( 
-    proveedor           VARCHAR2(50) NOT NULL,
+    proveedor           CHAR(10) NOT NULL,
     cantidadUnidad      VARCHAR2(50) NOT NULL,
     fecha               VARCHAR2(50) NOT NULL,
     hora                VARCHAR2(50) NOT NULL,
