@@ -20,3 +20,13 @@ CREATE TABLE nombre (
 
 --SUPUESTOS SEMANTICOS
 --packagin de cantidad es un supuesto semantico implicito
+
+
+
+--preguntar a Javier Calle not null en pk, 
+--dominios, numeros negativos, 
+--como se pone los mayeres menores, delete y update
+--como sabes que el pedido ya esta cumplido
+--meter atribudo registrado? en peidoArticuloCliente
+--si borras tarjeta
+--que pasa con los updates
