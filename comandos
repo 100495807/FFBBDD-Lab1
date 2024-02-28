@@ -14,3 +14,9 @@ CREATE TABLE nombre (
 --select product from fsdb.catalogue where product='Sereno';  
 --SELECCIONAR LO DE ARRIBA PERO SIN REPETIDOS
 --select distinct product from fsdb.catalogue where product='Sereno';  
+
+
+
+
+--SUPUESTOS SEMANTICOS
+--packagin de cantidad es un supuesto semantico implicito
