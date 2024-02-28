@@ -18,17 +18,16 @@ DROP TABLE producto;
 
 
 
-CREATE TABLE producto (
-    id          NUMBER(15),            
+CREATE TABLE producto (           
     nombre      VARCHAR2 (50) NOT NULL,
     coffea      VARCHAR2 (50) NOT NULL,
     varietal    VARCHAR2 (50) NOT NULL, ------etc
     origen      VARCHAR2 (50) NOT NULL,
     tostado     VARCHAR2 (50) NOT NULL,
-    cafeina     VARCHAR2 (4) NOT NULL,            --yes/no
-    CONSTRAINT pk_producto PRIMARY KEY (id),
+    cafeina     VARCHAR2 (50) NOT NULL,            --yes/no
+    CONSTRAINT pk_producto PRIMARY KEY (nombre),
     CONSTRAINT ck_producto_cafeina CHECK (cafeina IN ('yes','no')),
-    CONSTRAINT ck_producto_tostado CHECK (tostado IN ('natural', 'torrefacto', 'mezcla'))
+    CONSTRAINT ck_producto_tostado CHECK (tostado IN ('natural', 'high-roast', 'blend'))
 );
 
 CREATE TABLE formato (
