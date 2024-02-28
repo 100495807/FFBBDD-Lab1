@@ -5,7 +5,6 @@ DROP TABLE registrado CASCADE CONSTRAINTS;
 DROP TABLE descuento CASCADE CONSTRAINTS;
 DROP TABLE tarjetaCredito CASCADE CONSTRAINTS;
 DROP TABLE direccion CASCADE CONSTRAINTS;
-DROP TABLE cliente CASCADE CONSTRAINTS;
 DROP TABLE proveedorArticulo CASCADE CONSTRAINTS;
 DROP TABLE pedidosProveedor CASCADE CONSTRAINTS;
 DROP TABLE proveedor CASCADE CONSTRAINTS;
@@ -18,25 +17,21 @@ DROP TABLE producto CASCADE CONSTRAINTS;
 
 
 
-
+--BIEN
 CREATE TABLE producto (         
     nombre      VARCHAR2 (50),
     coffea      VARCHAR2 (50) NOT NULL,
     varietal    VARCHAR2 (50) NOT NULL, ------etc
     origen      VARCHAR2 (50) NOT NULL,
-    tostado     VARCHAR2 (50) NOT NULL,
-    cafeina     VARCHAR2 (50) NOT NULL,            --yes/no
+    tostado     CHAR(10) NOT NULL,
+    cafeina     CHAR(12) NOT NULL,            --yes/no
     CONSTRAINT pk_producto PRIMARY KEY (nombre),
     CONSTRAINT ck_producto_cafeina CHECK (cafeina IN ('yes','no')),
     CONSTRAINT ck_producto_tostado CHECK (tostado IN ('natural', 'high-roast', 'blend'))
 );
 
-CREATE TABLE formato (
-    nombre      VARCHAR2(50),
-    CONSTRAINT pk_formato PRIMARY KEY(nombre),
-    CONSTRAINT ck_formato CHECK (nombre IN ('raw bean', 'roasted bean', 'ground', 'freeze-dried', 'capsules', 'prepared'))--PONER TILDE EN CAPSULA
-);
 
+--BIEN
 CREATE TABLE cantidad (
     packaging   VARCHAR2(50),
     cantidad    VARCHAR2(50),
@@ -44,17 +39,20 @@ CREATE TABLE cantidad (
     CONSTRAINT pk_cantidad PRIMARY KEY(packaging, cantidad, magnitud)
 );
 
+
+--BIEN
 CREATE TABLE formatoProducto (
     idProducto     VARCHAR2(50) NOT NULL,
-    idFormato      VARCHAR2(50) NOT NULL,
+    formato      VARCHAR2(50) NOT NULL,
     packaging     VARCHAR2(50) NOT NULL,
     cantidad       VARCHAR2(50) NOT NULL,
     magnitud        VARCHAR2(50) NOT NULL,
     CONSTRAINT fk_formatoProducto_idProducto FOREIGN KEY(idProducto) REFERENCES producto(nombre) ON DELETE CASCADE,
-    CONSTRAINT fk_formatoProducto_idFormato FOREIGN KEY(idFormato) REFERENCES formato(nombre) ON DELETE CASCADE,
-    CONSTRAINT fk_formatoProducto_cantidad FOREIGN KEY(packaging, cantidad, magnitud) REFERENCES cantidad(packaging, cantidad, magnitud) ON DELETE CASCADE
+    CONSTRAINT fk_formatoProducto_cantidad FOREIGN KEY(packaging, cantidad, magnitud) REFERENCES cantidad(packaging, cantidad, magnitud) ON DELETE CASCADE,
+    CONSTRAINT ck_formato CHECK (formato IN ('raw bean', 'roasted bean', 'ground', 'freeze-dried', 'capsules', 'prepared'))--PONER TILDE EN CAPSULA
 );
 
+--BIEN
 CREATE TABLE articulo (
     idCodigo    CHAR(15),
     packaging   VARCHAR(50) NOT NULL,
@@ -72,6 +70,7 @@ CREATE TABLE articulo (
     CONSTRAINT ck_articulo_stockMax CHECK (stockMax<15)
 );
 
+--BIEN
 CREATE TABLE proveedor (
     cif             CHAR(10), --chequear cuantos digitos tiene el char del cif
     nombreComercio  VARCHAR2(50) NOT NULL,
@@ -91,13 +90,13 @@ CREATE TABLE proveedor (
     CONSTRAINT uk_proveedor_Direccion_Postal UNIQUE (DireccionPostal)
 );
 
+--BIEN
 CREATE TABLE pedidosProveedor ( 
     proveedor           CHAR(10) NOT NULL,
     cantidadUnidad      VARCHAR2(50) NOT NULL,
-    fecha               VARCHAR2(50) NOT NULL,
-    hora                VARCHAR2(50) NOT NULL,
+    fechaHora           DATE NOT NULL,
     estado              VARCHAR2(20) NOT NULL,
-    articulo            VARCHAR2(50) NOT NULL,
+    articulo            CHAR(15) NOT NULL,
     costePedidoTotal    VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_pedidosProveedor PRIMARY KEY(proveedor),
     CONSTRAINT fk_pedidosProveedor_proveedor FOREIGN KEY(proveedor) REFERENCES proveedor(cif) ON DELETE SET NULL,
@@ -105,15 +104,16 @@ CREATE TABLE pedidosProveedor (
     CONSTRAINT ck_pedidosProveedor_estado CHECK (estado IN ('draft', 'placed', 'fulfilled'))
 );
 
+--BIEN
 CREATE TABLE proveedorArticulo (
-    idArticulo      VARCHAR2(50) NOT NULL,
+    idArticulo      CHAR(15) NOT NULL,
     idProveedor     CHAR(10) NOT NULL,
     coste           VARCHAR2(50) NOT NULL,
     CONSTRAINT fk_proveedorArticulo_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo) ON DELETE CASCADE,
     CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(cif) ON DELETE CASCADE
 );
 
-
+--BIEN
 CREATE TABLE direccion (
     tipoVia         VARCHAR2(50) NOT NULL,
     nombreVia       VARCHAR2(50) NOT NULL,
@@ -128,6 +128,7 @@ CREATE TABLE direccion (
     CONSTRAINT pk_direccion PRIMARY KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
 );
 
+--BIEN
 CREATE TABLE tarjetaCredito (
     numTarjeta      VARCHAR2(50),
     titular         VARCHAR2(50) NOT NULL,
@@ -137,31 +138,33 @@ CREATE TABLE tarjetaCredito (
     CONSTRAINT pk_tarjetaCredito PRIMARY KEY(numTarjeta)
 );
 
+--BIEN
 CREATE TABLE descuento (
-    idUsuario          VARCHAR2(50),
-    porcentaje  VARCHAR(50)  NOT NULL,
-    fecha       VARCHAR2(50) NOT NULL,
+    idUsuario           VARCHAR2(50),
+    porcentaje          VARCHAR(50)  NOT NULL,
+    fecha               DATE NOT NULL,
     CONSTRAINT pk_descuento PRIMARY KEY(idUsuario),
     CONSTRAINT ck_porcentaje CHECK (porcentaje BETWEEN 0 AND 100)
 );
 
+--BIEN
 CREATE TABLE registrado (
-    usuario             VARCHAR2(50),
-    contrasena            VARCHAR2(50) NOT NULL,         
-    fechaHoraRegistro     DATE NOT NULL,
-    preferenciaContacto VARCHAR2(50) NOT NULL,
-    tarjeta             VARCHAR2(50) NOT NULL,
-    bonoDescuento       VARCHAR2(50) NOT NULL,
-    tipoVia         VARCHAR2(50) NOT NULL,
-    nombreVia       VARCHAR2(50) NOT NULL,
-    numInmueble     VARCHAR2(3) NOT NULL,
-    numBloque       VARCHAR2(3),
-    escalera        VARCHAR2(50),
-    piso            VARCHAR2(2),
-    puerta          VARCHAR2(2),
-    codigoPostal    VARCHAR2(50) NOT NULL,
-    ciudad          VARCHAR2(50) NOT NULL,
-    pais            VARCHAR2(50) NOT NULL,
+    usuario                 VARCHAR2(50),
+    contrasena              VARCHAR2(50) NOT NULL,         
+    fechaHoraRegistro       DATE NOT NULL,
+    preferenciaContacto     VARCHAR2(50) NOT NULL,
+    tarjeta                 VARCHAR2(50) NOT NULL,
+    bonoDescuento           VARCHAR2(50) NOT NULL,
+    tipoVia                 VARCHAR2(50) NOT NULL,
+    nombreVia               VARCHAR2(50) NOT NULL,
+    numInmueble             VARCHAR2(3) NOT NULL,
+    numBloque               VARCHAR2(3),
+    escalera                VARCHAR2(50),
+    piso                    VARCHAR2(2),
+    puerta                  VARCHAR2(2),
+    codigoPostal            VARCHAR2(50) NOT NULL,
+    ciudad                  VARCHAR2(50) NOT NULL,
+    pais                    VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_registrado_usuario PRIMARY KEY(usuario),
     CONSTRAINT fk_registrado_direccion FOREIGN KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta), --seria restrcit pero no existe en oracle
@@ -170,29 +173,29 @@ CREATE TABLE registrado (
     ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram'))
 );
 
-
+--BIEN
 CREATE TABLE pedidoCliente (
-    correo         VARCHAR2(50),
-    telefono        VARCHAR2(50),
-    nombre          VARCHAR2(50) NOT NULL,
-    apellido1       VARCHAR2(50) NOT NULL,
-    apellido2       VARCHAR2(50),
-    fecha           DATE NOT NULL,
-    fechaHoraPago   DATE NOT NULL,
-    tarjeta         VARCHAR2(50) NOT NULL,
-    fechaHoraEntrega  DATE NOT NULL,
-    precioTotal     VARCHAR2(50) NOT NULL,
-    tipoPago        VARCHAR2(50) NOT NULL,
-    tipoVia         VARCHAR2(50) NOT NULL,
-    nombreVia       VARCHAR2(50) NOT NULL,
-    numInmueble     VARCHAR2(3) NOT NULL,
-    numBloque       VARCHAR2(3),
-    escalera        VARCHAR2(50),
-    piso            VARCHAR2(2),
-    puerta          VARCHAR2(2),
-    codigoPostal    VARCHAR2(50) NOT NULL,
-    ciudad          VARCHAR2(50) NOT NULL,
-    pais            VARCHAR2(50) NOT NULL,
+    correo              VARCHAR2(50),
+    telefono            VARCHAR2(50),
+    nombre              VARCHAR2(50) NOT NULL,
+    apellido1           VARCHAR2(50) NOT NULL,
+    apellido2           VARCHAR2(50),
+    fecha               DATE NOT NULL,
+    fechaHoraPago       DATE NOT NULL,
+    tarjeta             VARCHAR2(50) NOT NULL,
+    fechaHoraEntrega    DATE NOT NULL,
+    precioTotal         VARCHAR2(50) NOT NULL,
+    tipoPago            VARCHAR2(50) NOT NULL,
+    tipoVia             VARCHAR2(50) NOT NULL,
+    nombreVia           VARCHAR2(50) NOT NULL,
+    numInmueble         VARCHAR2(3) NOT NULL,
+    numBloque           VARCHAR2(3),
+    escalera            VARCHAR2(50),
+    piso                VARCHAR2(2),
+    puerta              VARCHAR2(2),
+    codigoPostal        VARCHAR2(50) NOT NULL,
+    ciudad              VARCHAR2(50) NOT NULL,
+    pais                VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_pedidoCliente PRIMARY KEY(correo, telefono),
     CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais),
     CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta),
@@ -202,10 +205,10 @@ CREATE TABLE pedidoCliente (
 );
 
 CREATE TABLE pedidoArticuloCliente (
-    idArticulo      VARCHAR2(50) NOT NULL,
+    idArticulo      CHAR(15) NOT NULL,
     idClienteReg    VARCHAR2(50),
     cantidad        VARCHAR2(50) NOT NULL,
-    correo         VARCHAR2(50),
+    correo          VARCHAR2(50),
     telefono        VARCHAR2(50),
     CONSTRAINT fk_pedidoArticuloCliente_idPedido FOREIGN KEY(correo, telefono) REFERENCES pedidoCliente(correo, telefono),
     CONSTRAINT fk_pedidoArticuloCliente_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo),
@@ -215,15 +218,15 @@ CREATE TABLE pedidoArticuloCliente (
 
 
 CREATE TABLE  review(
-    fechaHora   DATE,            --si se borra el usuario registrado se adjudica la review a un usuario creado que se llama anonimo o se elimina la review directamente
-    usuario     VARCHAR2(50),
-    producto    VARCHAR2(50),
-    articulo    CHAR(15) NOT NULL,
-    puntuacion  VARCHAR2(2) NOT NULL,
-    titulo      VARCHAR2(50) NOT NULL,
-    texto       VARCHAR2(500) NOT NULL,
-    meGusta        VARCHAR2(10)  NOT NULL,
-    refrenda     VARCHAR2(4) NOT NULL,
+    fechaHora       DATE,            --si se borra el usuario registrado se adjudica la review a un usuario creado que se llama anonimo o se elimina la review directamente
+    usuario         VARCHAR2(50),
+    producto        VARCHAR2(50),
+    articulo        CHAR(15) NOT NULL,
+    puntuacion      VARCHAR2(2) NOT NULL,
+    titulo          VARCHAR2(50) NOT NULL,
+    texto           VARCHAR2(500) NOT NULL,
+    meGusta         VARCHAR2(10)  NOT NULL,
+    refrenda        VARCHAR2(4) NOT NULL,
     CONSTRAINT pk_review PRIMARY KEY(fechaHora, usuario, producto),
     CONSTRAINT fk_review_usuario FOREIGN KEY(usuario) REFERENCES registrado(usuario) ON DELETE SET NULL, --seria SET DEAFUALT pero no existe en oracle
     CONSTRAINT fk_review_articulo FOREIGN KEY(articulo) REFERENCES articulo(idCodigo) ON DELETE CASCADE,
@@ -233,10 +236,8 @@ CREATE TABLE  review(
 );
 
 
---preguntar a Javier Calle not null en pk, 
---dominios, numeros negativos, 
---como se pone los mayeres menores, delete y update
---como sabes que el pedido ya esta cumplido
---meter atribudo registrado? en peidoArticuloCliente
---si borras tarjeta
---que pasa con los updates
+
+
+
+--tabla formato borrada actualizar draw.io
+--crear tabla nn de descuentoCliente pq sino dificil identificar sera tipo descuentoCliente(usuario,descuento)
