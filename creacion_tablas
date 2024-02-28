@@ -19,14 +19,15 @@ DROP TABLE producto;
 
 
 
-CREATE TABLE producto (           
+CREATE TABLE producto (      
+    id          NUMBER(15),    
     nombre      VARCHAR2 (50) NOT NULL,
     coffea      VARCHAR2 (50) NOT NULL,
     varietal    VARCHAR2 (50) NOT NULL, ------etc
     origen      VARCHAR2 (50) NOT NULL,
     tostado     VARCHAR2 (50) NOT NULL,
     cafeina     VARCHAR2 (50) NOT NULL,            --yes/no
-    CONSTRAINT pk_producto PRIMARY KEY (nombre),
+    CONSTRAINT pk_producto PRIMARY KEY (id),
     CONSTRAINT ck_producto_cafeina CHECK (cafeina IN ('yes','no')),
     CONSTRAINT ck_producto_tostado CHECK (tostado IN ('natural', 'high-roast', 'blend'))
 );
