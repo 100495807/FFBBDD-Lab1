@@ -10,5 +10,7 @@ CREATE TABLE nombre (
 --VER TABLA                 DESC nombre;
 --VER TODAS LAS TABLAS      SELECT table_name FROM USER_TABLES;     Poner eso literal
 --LIMPIAL PANTALLA          cl scr
+--BUSCAR UNA COLUMNA DE UNA TABLA Y SOLO UN ELEMENTO ESPECIFCO
 --select product from fsdb.catalogue where product='Sereno';  
+--SELECCIONAR LO DE ARRIBA PERO SIN REPETIDOS
 --select distinct product from fsdb.catalogue where product='Sereno';  
