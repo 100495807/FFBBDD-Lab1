@@ -14,3 +14,5 @@ WHERE
     AND origin IS NOT NULL
     AND roasting IS NOT NULL
     AND decaf IS NOT NULL;
+
+
