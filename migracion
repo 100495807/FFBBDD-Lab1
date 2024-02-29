@@ -23,6 +23,7 @@ FROM fsdb.catalogue
 WHERE
     packaging is not null;
 
+
 INSERT INTO formatoProducto(idProducto, formato, packaging, cantidad, magnitud)
 SELECT DISTINCT
     product as idProducto,
@@ -36,23 +37,27 @@ FROM fsdb.catalogue WHERE
     AND packaging is not null;
 
 
-
-INSERT INTO articulo(idCodigo, pvp, stock, stockMin, stockMax)
+INSERT INTO articulo(idCodigo, packaging, cantidad, magnitud, pvp, stock, producto, stockMin, stockMax)
     SELECT DISTINCT
         barcode as idCodigo,
+        SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
+        SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
+        SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud,
         retail_price as pvp,
         cur_stock as stock,
-        min_stock as stockMin,
-        max_stock as stockMax
-        
-FROM fsdb.catalogue
-WHERE
+        product as producto,
+        TO_NUMBER(min_stock) as stockMin,
+        TO_NUMBER(max_stock) as stockMax
+FROM fsdb.catalogue WHERE
     barcode IS NOT NULL
+    AND packaging IS NOT NULL
     AND retail_price IS NOT NULL
     AND cur_stock IS NOT NULL
+    AND product IS NOT NULL
     AND min_stock IS NOT NULL
     AND max_stock IS NOT NULL;
 
+--hasta aqui ya
 
 INSERT INTO proveedor(id, cif, nombreComercio, correo, telefono, CuentaBanco, DireccionPostal, pais, tiempoMedio, numPedido, persona)
     SELECT DISTINCT
