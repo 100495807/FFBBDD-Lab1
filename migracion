@@ -79,35 +79,89 @@ WHERE
     AND prov_country IS NOT NULL
     AND prov_person IS NOT NULL;
 
---hasta aqui ya
 
 
-INSERT INTO proveedorArticulo(coste)
+
+INSERT INTO proveedorArticulo(idArticulo, idProveedor, coste)
     SELECT DISTINCT
+        barcode as idArticulo,
+        prov_taxid as idProveedor,
         cost_price as coste
-        
 FROM fsdb.catalogue
 WHERE
-    cost_price IS NOT NULL;
+    barcode is not null
+    and prov_taxid is not null
+    and cost_price IS NOT NULL;
     
+--hasta aqui bienn
 
-INSERT INTO producto(nombre, variedad, cafe, origen)
+INSERT INTO direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
     SELECT DISTINCT
-        product as nombre,
-        prodtype as variedad,
-        coffea as cafe,
-        varietal as variedad,
-        origin as origen,
-        roasting as cafe
-        
+        bill_waytype as tipoVia,
+        bill_wayname as nombreVia,
+        bill_gate as numInmueble,
+        bill_block as numBloque,
+        bill_stairw as escalera,
+        bill_floor as piso,
+        bill_door as puerta,
+        bill_zip as codigoPostal,
+        bill_town as ciudad,
+        bill_country as pais
 FROM fsdb.trolley
 WHERE
-    product IS NOT NULL
-    AND prodtype IS NOT NULL
-    AND coffea IS NOT NULL
-    AND varietal IS NOT NULL
-    AND origin IS NOT NULL
-    AND roasting IS NOT NULL;
+    bill_waytype IS NOT NULL
+    AND bill_wayname IS NOT NULL
+    AND bill_gate IS NOT NULL
+    AND bill_zip IS NOT NULL
+    AND bill_town IS NOT NULL
+    AND bill_country IS NOT NULL;
+
+
+
+
+INSERT INTO direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
+    SELECT DISTINCT
+        dliv_waytype as tipoVia,
+        dliv_wayname as nombreVia,
+        dliv_gate as numInmueble,
+        dliv_block as numBloque,
+        dliv_stairw as escalera,
+        dliv_floor as piso,
+        dliv_door as puerta,
+        dliv_zip as codigoPostal,
+        dliv_town as ciudad,
+        dliv_country as pais
+FROM fsdb.trolley
+WHERE
+    dliv_waytype IS NOT NULL
+    AND dliv_wayname IS NOT NULL
+    AND dliv_gate IS NOT NULL
+    AND dliv_zip IS NOT NULL
+    AND dliv_town IS NOT NULL
+    AND dliv_country IS NOT NULL;
+
+
+INSERT INTO tarjetaCredito(company, numTarjeta, titular, caducidadMes, caducidadYear)
+    SELECT DISTINCT
+        card_company as compañia,
+        card_number as numTarjeta,
+        card_holder as titular,
+        card_expiratn as caducidadMes,
+        card_expiratn as caducidadYear
+FROM fsdb.trolley
+WHERE
+    card_company IS NOT NULL
+    AND card_number IS NOT NULL
+    AND card_holder IS NOT NULL
+    AND card_expiratn IS NOT NULL;
+
+INSERT INTO descuento(porcentaje,)
+    SELECT DISTINCT
+        discount as porcentaje,
+       0     
+FROM fsdb.trolley
+WHERE
+    discount IS NOT NULL;
 
 
 INSERT INTO cantidad(id, cantidad, magnitud, packaging)
@@ -120,16 +174,16 @@ FROM fsdb.trolley
 WHERE
     nombre is not null;
 
-
+/*
 INSERT INTO articulo(idCodigo)
     SELECT DISTINCT
         barcode as idCodigo
         
 FROM fsdb.trolley
 WHERE
-    barcode IS NOT NULL;
+    barcode IS NOT NULL;*/
 
-
+/*
 INSERT INTO pedidosProveedor(fecha, hora)
     SELECT DISTINCT
         orderdate as fecha,
@@ -138,7 +192,7 @@ INSERT INTO pedidosProveedor(fecha, hora)
 FROM fsdb.trolley
 WHERE
     orderdate IS NOT NULL
-    AND ordertime IS NOT NULL;
+    AND ordertime IS NOT NULL;*/
 
 
 INSERT INTO cliente(nombre, apellido, apellido2, correo, telf)
@@ -158,68 +212,9 @@ WHERE
     AND client_mobile IS NOT NULL;
 
 
-INSERT INTO direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
-    SELECT DISTINCT
-        bill_waytype as tipoVia,
-        bill_wayname as nombreVia,
-        bill_gate as numInmueble,
-        bill_block as numBloque,
-        bill_stairw as escalera,
-        bill_floor as piso,
-        bill_door as puerta,
-        bill_zip as codigoPostal,
-        bill_town as ciudad,
-        bill_country as pais,
-        dliv_waytype as tipoVia,
-        dliv_wayname as nombreVia,
-        dliv_gate as numInmueble,
-        dliv_block as numBloque,
-        dliv_stairw as escalera,
-        dliv_floor as piso,
-        dliv_door as puerta,
-        dliv_zip as codigoPostal,
-        dliv_town as ciudad,
-        dliv_country as pais
-        
-        
-FROM fsdb.trolley
-WHERE
-    bill_waytype IS NOT NULL
-    AND bill_wayname IS NOT NULL
-    AND bill_gate IS NOT NULL
-    AND bill_block IS NOT NULL
-    AND bill_stairw IS NOT NULL
-    AND bill_floor IS NOT NULL
-    AND bill_door IS NOT NULL
-    AND bill_zip IS NOT NULL
-    AND bill_town IS NOT NULL
-    AND bill_country IS NOT NULL
-    AND dliv_waytype IS NOT NULL
-    AND dliv_wayname IS NOT NULL
-    AND dliv_gate IS NOT NULL
-    AND dliv_block IS NOT NULL
-    AND dliv_stairw IS NOT NULL
-    AND dliv_floor IS NOT NULL
-    AND dliv_door IS NOT NULL
-    AND dliv_zip IS NOT NULL
-    AND dliv_town IS NOT NULL
-    AND dliv_country IS NOT NULL;
 
 
-INSERT INTO tarjetaCredito(compañia, numTarjeta, titular, caducidadMes, caducidadYear)
-    SELECT DISTINCT
-        card_company as compañia,
-        card_number as numTarjeta,
-        card_holder as titular,
-        card_expiratn as caducidadMes,
-        card_expiratn as caducidadYear
-        
-FROM fsdb.trolley
-WHERE
-    card_company IS NOT NULL
-    AND card_number IS NOT NULL
-    AND card_holder IS NOT NULL
-    AND card_expiratn IS NOT NULL;
+
 
 
 INSERT INTO descuento(porcentaje)
