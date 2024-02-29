@@ -74,14 +74,14 @@ CREATE TABLE articulo (
 CREATE TABLE proveedor (
     cif             CHAR(10), --chequear cuantos digitos tiene el char del cif
     nombreComercio  VARCHAR2(50) NOT NULL,
-    correo          VARCHAR2(50) NOT NULL,
+    correo          VARCHAR2(60) NOT NULL,
     telefono        VARCHAR2(50) NOT NULL,
     CuentaBanco    VARCHAR2(50) NOT NULL,                          
     DireccionPostal  VARCHAR2(200) NOT NULL,
     pais            VARCHAR2(50) NOT NULL,
-    tiempoMedio     VARCHAR2(50) NOT NULL,
-    numPedido       VARCHAR2(50) NOT NULL,
-    persona         VARCHAR2(50) NOT NULL,
+    tiempoMedio     VARCHAR2(50),
+    numPedido       VARCHAR2(50),
+    persona         VARCHAR2(90) NOT NULL,
     CONSTRAINT pk_proveedor PRIMARY KEY(cif),
     CONSTRAINT uk_proveedor_nombreComercio UNIQUE (nombreComercio),
     CONSTRAINT uk_proveedor_correo UNIQUE (correo),
