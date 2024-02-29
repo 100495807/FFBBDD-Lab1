@@ -43,7 +43,7 @@ CREATE TABLE cantidad (
 --BIEN
 CREATE TABLE formatoProducto (
     idProducto     VARCHAR2(50) NOT NULL,
-    formato      VARCHAR2(50) NOT NULL,
+    formato         CHAR(20) NOT NULL,
     packaging     VARCHAR2(50) NOT NULL,
     cantidad       VARCHAR2(50) NOT NULL,
     magnitud        VARCHAR2(50) NOT NULL,
