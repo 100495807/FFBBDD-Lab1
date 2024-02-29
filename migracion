@@ -14,38 +14,27 @@ FROM fsdb.catalogue WHERE
     AND roasting IS NOT NULL 
     AND decaf IS NOT NULL;
 
+INSERT INTO cantidad(packaging, cantidad, magnitud)
+    SELECT DISTINCT
+    SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
+    SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
+    SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud
+FROM fsdb.catalogue
+WHERE
+    packaging is not null;
+
 INSERT INTO formatoProducto(idProducto, formato, packaging, cantidad, magnitud)
 SELECT DISTINCT
     product as idProducto,
     format as idFormato,
-    SUBSTR(packaging, 1, INSTR(packaging, ' ', 1, 3) - 1) AS packaging,
-    SUBSTR(packaging, INSTR(packaging, ' ', 1, 3) + 1, INSTR(packaging, ' ', 1, 4) - INSTR(packaging, ' ', 1, 3) - 1) AS cantidad,
-    SUBSTR(packaging, INSTR(packaging, ' ', 1, 4) + 1, INSTR(packaging, ' ', 1, 5) - INSTR(packaging, ' ', 1, 4) - 1) AS magnitud
+    SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
+    SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
+    SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud
 FROM fsdb.catalogue WHERE
     product IS NOT NULL
     AND format IS NOT NULL 
-    AND packaging IS NOT NULL;
+    AND packaging is not null;
 
-
-
-INSERT INTO formato(id, nombre)
-    SELECT DISTINCT
-        --id
-        format as nombre
-FROM fsdb.catalogue
-WHERE
-    nombre is not null;
-
-
-INSERT INTO cantidad(id, cantidad, magnitud, packaging)
-    SELECT DISTINCT
-        --id
-        TO_NUMBER(REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 2)) AS Cantidad,
-        REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 3) AS Magnitud,
-        REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 1) AS Packaging
-FROM fsdb.catalogue
-WHERE
-    nombre is not null;
 
 
 INSERT INTO articulo(idCodigo, pvp, stock, stockMin, stockMax)
