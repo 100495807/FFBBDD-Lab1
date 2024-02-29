@@ -14,13 +14,13 @@ FROM fsdb.catalogue WHERE
     AND roasting IS NOT NULL 
     AND decaf IS NOT NULL;
 
-INSERT INTO formatoProducto(idProducto, idFormato, packaging, cantidad, magnitud)
+INSERT INTO formatoProducto(idProducto, formato, packaging, cantidad, magnitud)
 SELECT DISTINCT
     product as idProducto,
     format as idFormato,
-    SUBSTR(packaging, 1, INSTR(packaging, ' ') - 1) AS packaging,                                      --estas 3 de packaging dan erros
-    SUBSTR(packaging, INSTR(packaging, ' ') + 1, INSTR(packaging, ' ', 1, 2) - INSTR(packaging, ' ') - 1) AS cantidad,
-    SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) + 1) AS magnitud
+    SUBSTR(packaging, 1, INSTR(packaging, ' ', 1, 3) - 1) AS packaging,
+    SUBSTR(packaging, INSTR(packaging, ' ', 1, 3) + 1, INSTR(packaging, ' ', 1, 4) - INSTR(packaging, ' ', 1, 3) - 1) AS cantidad,
+    SUBSTR(packaging, INSTR(packaging, ' ', 1, 4) + 1, INSTR(packaging, ' ', 1, 5) - INSTR(packaging, ' ', 1, 4) - 1) AS magnitud
 FROM fsdb.catalogue WHERE
     product IS NOT NULL
     AND format IS NOT NULL 
