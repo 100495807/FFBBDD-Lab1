@@ -108,7 +108,7 @@ CREATE TABLE pedidosProveedor (
 CREATE TABLE proveedorArticulo (
     idArticulo      CHAR(15) NOT NULL,
     idProveedor     CHAR(10) NOT NULL,
-    coste           VARCHAR2(50) NOT NULL,
+    coste           CHAR(12) NOT NULL,
     CONSTRAINT fk_proveedorArticulo_idArticulo FOREIGN KEY(idArticulo) REFERENCES articulo(idCodigo) ON DELETE CASCADE,
     CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(cif) ON DELETE CASCADE
 );
@@ -117,15 +117,15 @@ CREATE TABLE proveedorArticulo (
 CREATE TABLE direccion (
     tipoVia         VARCHAR2(50) NOT NULL,
     nombreVia       VARCHAR2(50) NOT NULL,
-    numInmueble     VARCHAR2(3) NOT NULL,
-    numBloque       VARCHAR2(3),
+    numInmueble     VARCHAR2(30) NOT NULL,
+    numBloque       VARCHAR2(30),
     escalera        VARCHAR2(50),
-    piso            VARCHAR2(2),
-    puerta          VARCHAR2(2),
+    piso            VARCHAR2(30),
+    puerta          VARCHAR2(30),
     codigoPostal    VARCHAR2(50) NOT NULL,
     ciudad          VARCHAR2(50) NOT NULL,
     pais            VARCHAR2(50) NOT NULL,
-    CONSTRAINT pk_direccion PRIMARY KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
+    CONSTRAINT pk_direccion PRIMARY KEY(tipoVia, nombreVia, numInmueble,  codigoPostal, ciudad, pais)
 );
 
 --BIEN
@@ -133,8 +133,8 @@ CREATE TABLE tarjetaCredito (
     numTarjeta      VARCHAR2(50),
     titular         VARCHAR2(50) NOT NULL,
     company         VARCHAR2(50) NOT NULL,
-    caducidadMes       CHAR(2) NOT NULL,
-    caducidadYear      CHAR(2) NOT NULL,
+    caducidadMes       VARCHAR2(50) NOT NULL,
+    caducidadYear      VARCHAR2(50) NOT NULL,
     CONSTRAINT pk_tarjetaCredito PRIMARY KEY(numTarjeta)
 );
 
