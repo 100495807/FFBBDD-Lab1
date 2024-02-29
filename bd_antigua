@@ -28,8 +28,8 @@
 
  Nombre                                    ?Nulo?   Tipo
  ----------------------------------------- -------- ----------------------------
- ORDERDATE                                          CHAR(14)                    //pedidosProveedor(fecha)  
- ORDERTIME                                          CHAR(14)                    //pedidosProveedor(hora)
+ ORDERDATE                                          CHAR(14)                    //pedidosCliente(fecha)  
+ ORDERTIME                                          CHAR(14)                    //pedidosCliente(hora)
  PRODUCT                                            CHAR(50)                    //producto(nombre)
  BARCODE                                            CHAR(15)                    //articulo(idCodigo)
  PRODTYPE                                           CHAR(20)                    //producto(variedad)
@@ -70,16 +70,16 @@
  BILL_COUNTRY                                       CHAR(45)                    //direcciones(pais)
  DLIV_DATE                                          CHAR(14)                    //pedidoCliente(fechaEntrega)
  DLIV_TIME                                          CHAR(14)                    //pedidoCliente(horaEntrega)
- DLIV_WAYTYPE                                       CHAR(10)                    //direcciones(tipoVia)
- DLIV_WAYNAME                                       CHAR(30)                    //direcciones(nombreVia)
- DLIV_GATE                                          CHAR(3)                     //direcciones(numInmueble)
- DLIV_BLOCK                                         CHAR(1)                     //direcciones(numBloque)
- DLIV_STAIRW                                        CHAR(2)                     //direcciones(escalera)
- DLIV_FLOOR                                         CHAR(7)                     //direcciones(piso)
- DLIV_DOOR                                          CHAR(2)                     //direcciones(puerta)
- DLIV_ZIP                                           CHAR(5)                     //direcciones(codigoPostal)
- DLIV_TOWN                                          CHAR(45)                    //direcciones(ciudad)
- DLIV_COUNTRY                                       CHAR(45)                    //direcciones(pais)
+ DLIV_WAYTYPE                                       CHAR(10)                    //pedidoCliente(tipoVia)
+ DLIV_WAYNAME                                       CHAR(30)                    //pedidoCliente(nombreVia)
+ DLIV_GATE                                          CHAR(3)                     //pedidoCliente(numInmueble)
+ DLIV_BLOCK                                         CHAR(1)                     //pedidoCliente(numBloque)
+ DLIV_STAIRW                                        CHAR(2)                     //pedidoCliente(escalera)
+ DLIV_FLOOR                                         CHAR(7)                     //pedidoCliente(piso)
+ DLIV_DOOR                                          CHAR(2)                     //pedidoCliente(puerta)
+ DLIV_ZIP                                           CHAR(5)                     //pedidoCliente(codigoPostal)
+ DLIV_TOWN                                          CHAR(45)                    //pedidoCliente(ciudad)
+ DLIV_COUNTRY                                       CHAR(45)                    //pedidoCliente(pais)
 
 
 Nombre                                    ?Nulo?   Tipo
