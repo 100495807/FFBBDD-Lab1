@@ -57,29 +57,29 @@ FROM fsdb.catalogue WHERE
     AND min_stock IS NOT NULL
     AND max_stock IS NOT NULL;
 
---hasta aqui ya
 
-INSERT INTO proveedor(id, cif, nombreComercio, correo, telefono, CuentaBanco, DireccionPostal, pais, tiempoMedio, numPedido, persona)
+INSERT INTO proveedor(cif, nombreComercio, correo, telefono, CuentaBanco, DireccionPostal, pais, persona)
     SELECT DISTINCT
-        supplier as nombreComercio,
         prov_taxid as cif,
+        supplier as nombreComercio,
+        prov_email as correo,
+        prov_mobile as telefono,
         prov_bankacc as CuentaBanco,
         prov_address as DireccionPostal,
         prov_country as pais,
-        prov_person as persona,
-        prov_email as correo,
-        prov_mobile as telefono
-        
+        prov_person as persona
 FROM fsdb.catalogue
 WHERE
-    supplier IS NOT NULL
-    AND prov_taxid IS NOT NULL
+    prov_taxid IS NOT NULL
+    AND supplier IS NOT NULL
+    AND prov_email IS NOT NULL
+    AND prov_mobile IS NOT NULL
     AND prov_bankacc IS NOT NULL
     AND prov_address IS NOT NULL
     AND prov_country IS NOT NULL
-    AND prov_person IS NOT NULL
-    AND prov_email IS NOT NULL
-    AND prov_mobile IS NOT NULL;
+    AND prov_person IS NOT NULL;
+
+--hasta aqui ya
 
 
 INSERT INTO proveedorArticulo(coste)
