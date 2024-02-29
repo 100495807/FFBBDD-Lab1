@@ -67,7 +67,7 @@ CREATE TABLE articulo (
     CONSTRAINT fk_articulo_cantidad FOREIGN KEY(packaging, cantidad, magnitud) REFERENCES cantidad(packaging, cantidad, magnitud) ON DELETE CASCADE,
     CONSTRAINT fk_articulo_producto FOREIGN KEY(producto) REFERENCES producto(nombre) ON DELETE CASCADE,
     CONSTRAINT ck_articulo_stockMin CHECK (stockMin>5),
-    CONSTRAINT ck_articulo_stockMax CHECK (stockMax<15)
+    CONSTRAINT ck_articulo_stockMax CHECK (stockMax>10)
 );
 
 --BIEN
