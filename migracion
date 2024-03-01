@@ -116,35 +116,9 @@ FROM fsdb.trolley
 WHERE
     discount IS NOT NULL;
 
---hasta aqui bienn
-
 INSERT INTO direccion(idDireccion, tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
-    SELECT DISTINCT
-        secDireccion.NEXTVAL as idDireccion,
-        bill_waytype as tipoVia,
-        bill_wayname as nombreVia,
-        bill_gate as numInmueble,
-        bill_block as numBloque,
-        bill_stairw as escalera,
-        bill_floor as piso,
-        bill_door as puerta,
-        bill_zip as codigoPostal,
-        bill_town as ciudad,
-        bill_country as pais
-FROM fsdb.trolley
-WHERE
-    bill_waytype IS NOT NULL
-    AND bill_wayname IS NOT NULL
-    AND bill_gate IS NOT NULL
-    AND bill_zip IS NOT NULL
-    AND bill_town IS NOT NULL
-    AND bill_country IS NOT NULL;
-
-
-
-
-INSERT INTO direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
-    SELECT DISTINCT
+    SELECT secDireccion.NEXTVAL as idDireccion, tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais
+FROM(select DISTINCT
         dliv_waytype as tipoVia,
         dliv_wayname as nombreVia,
         dliv_gate as numInmueble,
@@ -162,7 +136,34 @@ WHERE
     AND dliv_gate IS NOT NULL
     AND dliv_zip IS NOT NULL
     AND dliv_town IS NOT NULL
-    AND dliv_country IS NOT NULL;
+    AND dliv_country IS NOT NULL
+UNION 
+SELECT DISTINCT
+        bill_waytype as tipoVia,
+        bill_wayname as nombreVia,
+        bill_gate as numInmueble,
+        bill_block as numBloque,
+        bill_stairw as escalera,
+        bill_floor as piso,
+        bill_door as puerta,
+        bill_zip as codigoPostal,
+        bill_town as ciudad,
+        bill_country as pais
+FROM fsdb.trolley
+WHERE
+    bill_waytype IS NOT NULL
+    AND bill_wayname IS NOT NULL
+    AND bill_gate IS NOT NULL
+    AND bill_zip IS NOT NULL
+    AND bill_town IS NOT NULL
+    AND bill_country IS NOT NULL
+);
+
+--hasta aqui bienn
+
+
+--aqui
+
 
 
 --bill cliente registrado
