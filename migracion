@@ -168,13 +168,10 @@ WHERE
 
 --bill cliente registrado
 
-
-
-
 INSERT INTO registrado(usuario, fechaRegistro, horaRegistro, contrasena)
     SELECT DISTINCT
         username as usuario,
-        reg_date as fechaEntrega,
+        TO_DATE(dliv_date || ' ' || dliv_time, 'YYYY / MM / DD HH:MI:SS AM') as FechaHoraEntrega,
         reg_time as horaRegistro,
         user_passw as contrasena
         
