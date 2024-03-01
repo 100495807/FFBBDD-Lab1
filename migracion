@@ -92,11 +92,35 @@ WHERE
     barcode is not null
     and prov_taxid is not null
     and cost_price IS NOT NULL;
-    
+
+
+INSERT INTO tarjetaCredito(company, numTarjeta, titular, caducidadMes, caducidadYear)
+    SELECT DISTINCT
+        card_company as compañia,
+        card_number as numTarjeta,
+        card_holder as titular,
+        card_expiratn as caducidadMes,
+        card_expiratn as caducidadYear
+FROM fsdb.trolley WHERE
+    card_company IS NOT NULL
+    AND card_number IS NOT NULL
+    AND card_holder IS NOT NULL
+    AND card_expiratn IS NOT NULL;
+
+
+INSERT INTO descuento(porcentaje, fecha)
+    SELECT DISTINCT
+        discount as porcentaje,
+        NULL as fecha
+FROM fsdb.trolley
+WHERE
+    discount IS NOT NULL;
+
 --hasta aqui bienn
 
-INSERT INTO direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
+INSERT INTO direccion(idDireccion, tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
     SELECT DISTINCT
+        secDireccion.NEXTVAL as idDireccion,
         bill_waytype as tipoVia,
         bill_wayname as nombreVia,
         bill_gate as numInmueble,
@@ -141,89 +165,9 @@ WHERE
     AND dliv_country IS NOT NULL;
 
 
-INSERT INTO tarjetaCredito(company, numTarjeta, titular, caducidadMes, caducidadYear)
-    SELECT DISTINCT
-        card_company as compañia,
-        card_number as numTarjeta,
-        card_holder as titular,
-        card_expiratn as caducidadMes,
-        card_expiratn as caducidadYear
-FROM fsdb.trolley
-WHERE
-    card_company IS NOT NULL
-    AND card_number IS NOT NULL
-    AND card_holder IS NOT NULL
-    AND card_expiratn IS NOT NULL;
-
-INSERT INTO descuento(porcentaje,)
-    SELECT DISTINCT
-        discount as porcentaje,
-       0     
-FROM fsdb.trolley
-WHERE
-    discount IS NOT NULL;
+--bill cliente registrado
 
 
-INSERT INTO cantidad(id, cantidad, magnitud, packaging)
-    SELECT DISTINCT
-        --id
-        TO_NUMBER(REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 2)) AS Cantidad,
-        REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 3) AS Magnitud,
-        REGEXP_SUBSTR(Packaging, '\(([^,]+), (\d+) ([^\)]+)\)', 1, 1, NULL, 1) AS Packaging
-FROM fsdb.trolley
-WHERE
-    nombre is not null;
-
-/*
-INSERT INTO articulo(idCodigo)
-    SELECT DISTINCT
-        barcode as idCodigo
-        
-FROM fsdb.trolley
-WHERE
-    barcode IS NOT NULL;*/
-
-/*
-INSERT INTO pedidosProveedor(fecha, hora)
-    SELECT DISTINCT
-        orderdate as fecha,
-        ordertime as hora
-        
-FROM fsdb.trolley
-WHERE
-    orderdate IS NOT NULL
-    AND ordertime IS NOT NULL;*/
-
-
-INSERT INTO cliente(nombre, apellido, apellido2, correo, telf)
-    SELECT DISTINCT
-        client_name as nombre,
-        client_surn1 as apellido,
-        client_surn2 as apellido2,
-        client_email as correo,
-        client_mobile as telf
-        
-FROM fsdb.trolley
-WHERE
-    client_name IS NOT NULL
-    AND client_surn1 IS NOT NULL
-    AND client_surn2 IS NOT NULL
-    AND client_email IS NOT NULL
-    AND client_mobile IS NOT NULL;
-
-
-
-
-
-
-
-INSERT INTO descuento(porcentaje)
-    SELECT DISTINCT
-        discount as porcentaje
-        
-FROM fsdb.trolley
-WHERE
-    discount IS NOT NULL;
 
 
 INSERT INTO registrado(usuario, fechaRegistro, horaRegistro, contrasena)
