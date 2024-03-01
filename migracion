@@ -1,214 +1,212 @@
 INSERT INTO producto (nombre, coffea, varietal, origen, tostado, cafeina)
 SELECT DISTINCT
-    product as nombre, 
-    coffea, 
-    varietal, 
-    origin as origen,
-    roasting as tostado,           --he tenido que modifica en la otra tabla de varchar a char osea como estaba en la antigua  pero creo que no debemos hacer eso
-    decaf as cafeina
-FROM fsdb.catalogue WHERE
-    product IS NOT NULL 
-    AND coffea IS NOT NULL 
-    AND varietal IS NOT NULL
-    AND origin IS NOT NULL  
-    AND roasting IS NOT NULL 
-    AND decaf IS NOT NULL;
+            product as nombre, 
+            coffea, 
+            varietal, 
+            origin as origen,
+            roasting as tostado,     
+            decaf as cafeina
+    FROM fsdb.catalogue 
+        WHERE
+            product IS NOT NULL 
+            AND coffea IS NOT NULL 
+            AND varietal IS NOT NULL
+            AND origin IS NOT NULL  
+            AND roasting IS NOT NULL 
+            AND decaf IS NOT NULL;
 
 INSERT INTO cantidad(packaging, cantidad, magnitud)
     SELECT DISTINCT
-    SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
-    SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
-    SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud
-FROM fsdb.catalogue
-WHERE
-    packaging is not null;
+            SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
+            SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
+            SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud
+    FROM fsdb.catalogue
+        WHERE
+            packaging is not null;
 
 
 INSERT INTO formatoProducto(idProducto, formato, packaging, cantidad, magnitud)
-SELECT DISTINCT
-    product as idProducto,
-    format as idFormato,
-    SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
-    SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
-    SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud
-FROM fsdb.catalogue WHERE
-    product IS NOT NULL
-    AND format IS NOT NULL 
-    AND packaging is not null;
+    SELECT DISTINCT
+            product as idProducto,
+            format as idFormato,
+            SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
+            SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
+            SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud
+    FROM fsdb.catalogue 
+        WHERE
+            product IS NOT NULL
+            AND format IS NOT NULL 
+            AND packaging is not null;
 
 
 INSERT INTO articulo(idCodigo, packaging, cantidad, magnitud, pvp, stock, producto, stockMin, stockMax)
     SELECT DISTINCT
-        barcode as idCodigo,
-        SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
-        SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
-        SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud,
-        retail_price as pvp,
-        cur_stock as stock,
-        product as producto,
-        TO_NUMBER(min_stock) as stockMin,
-        TO_NUMBER(max_stock) as stockMax
-FROM fsdb.catalogue WHERE
-    barcode IS NOT NULL
-    AND packaging IS NOT NULL
-    AND retail_price IS NOT NULL
-    AND cur_stock IS NOT NULL
-    AND product IS NOT NULL
-    AND min_stock IS NOT NULL
-    AND max_stock IS NOT NULL;
+            barcode as idCodigo,
+            SUBSTR(packaging, 1, INSTR(packaging, ' ')) AS packaging,
+            SUBSTR(packaging, INSTR(packaging, ' ') +1, INSTR(packaging, ' ',1, 2) - INSTR(packaging, ' ')-1) AS cantidad,     
+            SUBSTR(packaging, INSTR(packaging, ' ', 1, 2) +1, LENGTH(Packaging) - INSTR(packaging, ' ', 1, 2)-1) AS magnitud,
+            retail_price as pvp,
+            cur_stock as stock,
+            product as producto,
+            TO_NUMBER(min_stock) as stockMin,
+            TO_NUMBER(max_stock) as stockMax
+    FROM fsdb.catalogue 
+        WHERE
+            barcode IS NOT NULL
+            AND packaging IS NOT NULL
+            AND retail_price IS NOT NULL
+            AND cur_stock IS NOT NULL
+            AND product IS NOT NULL
+            AND min_stock IS NOT NULL
+            AND max_stock IS NOT NULL;
 
 
 INSERT INTO proveedor(cif, nombreComercio, correo, telefono, CuentaBanco, DireccionPostal, pais, persona)
     SELECT DISTINCT
-        prov_taxid as cif,
-        supplier as nombreComercio,
-        prov_email as correo,
-        prov_mobile as telefono,
-        prov_bankacc as CuentaBanco,
-        prov_address as DireccionPostal,
-        prov_country as pais,
-        prov_person as persona
-FROM fsdb.catalogue
-WHERE
-    prov_taxid IS NOT NULL
-    AND supplier IS NOT NULL
-    AND prov_email IS NOT NULL
-    AND prov_mobile IS NOT NULL
-    AND prov_bankacc IS NOT NULL
-    AND prov_address IS NOT NULL
-    AND prov_country IS NOT NULL
-    AND prov_person IS NOT NULL;
+            prov_taxid as cif,
+            supplier as nombreComercio,
+            prov_email as correo,
+            prov_mobile as telefono,
+            prov_bankacc as CuentaBanco,
+            prov_address as DireccionPostal,
+            prov_country as pais,
+            prov_person as persona
+    FROM fsdb.catalogue
+        WHERE
+            prov_taxid IS NOT NULL
+            AND supplier IS NOT NULL
+            AND prov_email IS NOT NULL
+            AND prov_mobile IS NOT NULL
+            AND prov_bankacc IS NOT NULL
+            AND prov_address IS NOT NULL
+            AND prov_country IS NOT NULL
+            AND prov_person IS NOT NULL;
 
 
 
 
 INSERT INTO proveedorArticulo(idArticulo, idProveedor, coste)
     SELECT DISTINCT
-        barcode as idArticulo,
-        prov_taxid as idProveedor,
-        cost_price as coste
-FROM fsdb.catalogue
-WHERE
-    barcode is not null
-    and prov_taxid is not null
-    and cost_price IS NOT NULL;
+            barcode as idArticulo,
+            prov_taxid as idProveedor,
+            cost_price as coste
+    FROM fsdb.catalogue
+        WHERE
+            barcode is not null
+            and prov_taxid is not null
+            and cost_price IS NOT NULL;
 
 
 INSERT INTO tarjetaCredito(company, numTarjeta, titular, caducidadMes, caducidadYear)
     SELECT DISTINCT
-        card_company as compañia,
-        card_number as numTarjeta,
-        card_holder as titular,
-        card_expiratn as caducidadMes,
-        card_expiratn as caducidadYear
-FROM fsdb.trolley WHERE
-    card_company IS NOT NULL
-    AND card_number IS NOT NULL
-    AND card_holder IS NOT NULL
-    AND card_expiratn IS NOT NULL;
+            card_company as compañia,
+            card_number as numTarjeta,
+            card_holder as titular,
+            card_expiratn as caducidadMes,
+            card_expiratn as caducidadYear
+    FROM fsdb.trolley 
+        WHERE
+            card_company IS NOT NULL
+            AND card_number IS NOT NULL
+            AND card_holder IS NOT NULL
+            AND card_expiratn IS NOT NULL;
 
 
 INSERT INTO descuento(porcentaje, fecha)
     SELECT DISTINCT
-        discount as porcentaje,
-        NULL as fecha
-FROM fsdb.trolley
-WHERE
-    discount IS NOT NULL;
+            discount as porcentaje,
+            NULL as fecha
+    FROM fsdb.trolley
+        WHERE
+            discount IS NOT NULL;
 
 INSERT INTO direccion(idDireccion, tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais)
     SELECT secDireccion.NEXTVAL as idDireccion, tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais
-FROM(select DISTINCT
-        dliv_waytype as tipoVia,
-        dliv_wayname as nombreVia,
-        dliv_gate as numInmueble,
-        dliv_block as numBloque,
-        dliv_stairw as escalera,
-        dliv_floor as piso,
-        dliv_door as puerta,
-        dliv_zip as codigoPostal,
-        dliv_town as ciudad,
-        dliv_country as pais
-FROM fsdb.trolley
-WHERE
-    dliv_waytype IS NOT NULL
-    AND dliv_wayname IS NOT NULL
-    AND dliv_gate IS NOT NULL
-    AND dliv_zip IS NOT NULL
-    AND dliv_town IS NOT NULL
-    AND dliv_country IS NOT NULL
+    FROM(select DISTINCT
+            dliv_waytype as tipoVia,
+            dliv_wayname as nombreVia,
+            dliv_gate as numInmueble,
+            dliv_block as numBloque,
+            dliv_stairw as escalera,
+            dliv_floor as piso,
+            dliv_door as puerta,
+            dliv_zip as codigoPostal,
+            dliv_town as ciudad,
+            dliv_country as pais
+    FROM fsdb.trolley
+        WHERE
+            dliv_waytype IS NOT NULL
+            AND dliv_wayname IS NOT NULL
+            AND dliv_gate IS NOT NULL
+            AND dliv_zip IS NOT NULL
+            AND dliv_town IS NOT NULL
+            AND dliv_country IS NOT NULL
 UNION 
-SELECT DISTINCT
-        bill_waytype as tipoVia,
-        bill_wayname as nombreVia,
-        bill_gate as numInmueble,
-        bill_block as numBloque,
-        bill_stairw as escalera,
-        bill_floor as piso,
-        bill_door as puerta,
-        bill_zip as codigoPostal,
-        bill_town as ciudad,
-        bill_country as pais
-FROM fsdb.trolley
-WHERE
-    bill_waytype IS NOT NULL
-    AND bill_wayname IS NOT NULL
-    AND bill_gate IS NOT NULL
-    AND bill_zip IS NOT NULL
-    AND bill_town IS NOT NULL
-    AND bill_country IS NOT NULL
+    SELECT DISTINCT
+            bill_waytype as tipoVia,
+            bill_wayname as nombreVia,
+            bill_gate as numInmueble,
+            bill_block as numBloque,
+            bill_stairw as escalera,
+            bill_floor as piso,
+            bill_door as puerta,
+            bill_zip as codigoPostal,
+            bill_town as ciudad,
+            bill_country as pais
+    FROM fsdb.trolley
+        WHERE
+            bill_waytype IS NOT NULL
+            AND bill_wayname IS NOT NULL
+            AND bill_gate IS NOT NULL
+            AND bill_zip IS NOT NULL
+            AND bill_town IS NOT NULL
+            AND bill_country IS NOT NULL
 );
 
---hasta aqui bienn
 
-
---aqui
-
-
-
---bill cliente registrado
 
 INSERT INTO registrado(usuario, contrasena, fechaHoraRegistro, preferenciaContacto, porcentaje)
     SELECT DISTINCT
-        username as usuario,
-        user_passw as contrasena,
-        TO_DATE(reg_date || ' ' || reg_time, 'YYYY / MM / DD HH:MI:SS AM') as FechaHoraEntrega,
-        NULL AS preferenciaContacto,
-        discount as porcentaje
-FROM fsdb.trolley
-WHERE
-    username IS NOT NULL
-    AND discount IS NOT NULL
-    AND user_passw IS NOT NULL;
+            username as usuario,
+            user_passw as contrasena,
+            TO_DATE(reg_date || ' ' || reg_time, 'YYYY / MM / DD HH:MI:SS AM') as FechaHoraEntrega,
+            NULL AS preferenciaContacto,
+            discount as porcentaje
+    FROM fsdb.trolley
+        WHERE
+            username IS NOT NULL
+            AND discount IS NOT NULL
+            AND user_passw IS NOT NULL;
 
 
 INSERT INTO direccionCliente(idCliente, idDireccion)
     SELECT DISTINCT
-    username as usuario,
-    dir.idDireccion as idDireccion
-    FROM fsdb.trolley 
-    troll INNER JOIN direccion dir ON 
-    troll.dliv_waytype = dir.tipoVia 
-    AND troll.dliv_wayname = dir.nombreVia
-    AND troll.dliv_zip = dir.codigoPostal
-    AND troll.dliv_town = dir.ciudad
-    AND troll.dliv_country = dir.pais
+            username as usuario,
+            dir.idDireccion as idDireccion
+    FROM fsdb.trolley troll 
+        INNER JOIN direccion dir ON troll.dliv_waytype = dir.tipoVia 
+        AND troll.dliv_wayname = dir.nombreVia
+        AND troll.dliv_zip = dir.codigoPostal
+        AND troll.dliv_town = dir.ciudad
+        AND troll.dliv_country = dir.pais
     WHERE
-    username IS NOT NULL 
-    AND user_passw IS NOT NULL 
-    AND dliv_waytype IS NOT NULL 
-    AND dliv_wayname IS NOT NULL
-    AND dliv_zip IS NOT NULL
-    AND dliv_town IS NOT NULL
-    AND dliv_country IS NOT NULL;
+        username IS NOT NULL 
+        AND user_passw IS NOT NULL 
+        AND dliv_waytype IS NOT NULL 
+        AND dliv_wayname IS NOT NULL
+        AND dliv_zip IS NOT NULL
+        AND dliv_town IS NOT NULL
+        AND dliv_country IS NOT NULL;
+
 
 INSERT INTO tarjetaCliente(numTarjeta, idCliente)
     SELECT DISTINCT 
-        card_number as numTarjeta,
-        username as idCliente
+            card_number as numTarjeta,
+            username as idCliente
     FROM fsdb.trolley    WHERE 
         card_number is not null 
         AND username is not null;
+
 
 INSERT INTO pedidoCliente(idPedido, correo, telefono, fecha, tipoPago, fechaHoraPago, tarjeta, fechaHoraEntrega, nombre, apellido1, apellido2, direccion)
     SELECT 
@@ -226,13 +224,14 @@ INSERT INTO pedidoCliente(idPedido, correo, telefono, fecha, tipoPago, fechaHora
         client_surn1 as apellido1,
         client_surn2 as apellido2,
         dir.idDireccion as direccion
-    FROM fsdb.trolley troll INNER JOIN direccion dir ON 
-            troll.bill_waytype = dir.tipoVia 
-            AND troll.bill_wayname = dir.nombreVia 
-            AND troll.bill_zip = dir.codigoPostal
-            AND troll.bill_town = dir.ciudad
-            AND troll.bill_country = dir.pais
-            WHERE orderdate is not null
+    FROM fsdb.trolley troll 
+        INNER JOIN direccion dir ON troll.bill_waytype = dir.tipoVia 
+        AND troll.bill_wayname = dir.nombreVia 
+        AND troll.bill_zip = dir.codigoPostal
+        AND troll.bill_town = dir.ciudad
+        AND troll.bill_country = dir.pais
+    WHERE 
+            orderdate is not null
             and ordertime is not null
             and payment_type is not null
             and payment_date is not null
@@ -252,43 +251,45 @@ INSERT INTO pedidoCliente(idPedido, correo, telefono, fecha, tipoPago, fechaHora
 
 INSERT INTO pedidoArticuloCliente(idClienteReg, idPedido, idArticulo, cantidad)
     SELECT DISTINCT
-        username as idClienteReg,
-        pedCli.idPedido as idPedido,
-        barcode as idArticulo,
-        quantity as cantidad
-    from fsdb.trolley troll inner join pedidoCliente pedCli on troll.client_name = pedCli.nombre
-    and troll.client_surn1 = pedCli.apellido1
-    and troll.payment_type = pedCli.tipoPago
-    and TO_DATE(troll.payment_date || ' ' || troll.payment_time, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fechaHoraPago
-    and TO_DATE(troll.orderdate || ' ' || troll.ordertime, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fecha
-    and TO_DATE(troll.dliv_date || ' ' || troll.dliv_time, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fechaHoraEntrega
-    inner join articulo art on troll.barcode = art.idCodigo
-    where username is not null
-    and client_name is not null
-    and client_surn1 is not null
-    and payment_type is not null
-    and payment_date is not null
-    and orderdate is not null
-    and dliv_date is not null
-    and barcode is not null
-    and quantity is not null;
+            username as idClienteReg,
+            pedCli.idPedido as idPedido,
+            barcode as idArticulo,
+            quantity as cantidad
+    from fsdb.trolley troll 
+        inner join pedidoCliente pedCli on troll.client_name = pedCli.nombre
+        and troll.client_surn1 = pedCli.apellido1
+        and troll.payment_type = pedCli.tipoPago
+        and TO_DATE(troll.payment_date || ' ' || troll.payment_time, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fechaHoraPago
+        and TO_DATE(troll.orderdate || ' ' || troll.ordertime, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fecha
+        and TO_DATE(troll.dliv_date || ' ' || troll.dliv_time, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fechaHoraEntrega
+        inner join articulo art on troll.barcode = art.idCodigo
+    where 
+        username is not null
+        and client_name is not null
+        and client_surn1 is not null
+        and payment_type is not null
+        and payment_date is not null
+        and orderdate is not null
+        and dliv_date is not null
+        and barcode is not null
+        and quantity is not null;
 
 
 
 INSERT INTO review(fechaHora, usuario, producto, articulo, puntuacion, titulo, texto, meGusta, refrenda)
     SELECT DISTINCT
-        TO_DATE(post_date || ' ' || post_time, 'YYYY / MM / DD HH:MI:SS AM') as fechaHora,
-        username as usuario,
-        product as producto,
-        barcode as articulo,
-        score as puntuacion,
-        title as titulo,
-        text as texto,
-        likes as meGusta,
-        endorsed as refrenda
+            TO_DATE(post_date || ' ' || post_time, 'YYYY / MM / DD HH:MI:SS AM') as fechaHora,
+            username as usuario,
+            product as producto,
+            barcode as articulo,
+            score as puntuacion,
+            title as titulo,
+            text as texto,
+            likes as meGusta,
+            endorsed as refrenda
     from fsdb.posts p inner join registrado cli_reg on p.username = cli_reg.usuario
-    inner join articulo art on p.barcode = art.idCodigo
-    inner join producto prod on p.product = prod.nombre
+        inner join articulo art on p.barcode = art.idCodigo
+        inner join producto prod on p.product = prod.nombre
     where
         username is not null
         and product is not null
