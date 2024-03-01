@@ -114,21 +114,6 @@ CREATE TABLE proveedorArticulo (
 );
 
 --BIEN
-CREATE TABLE direccion (
-    tipoVia         VARCHAR2(50) NOT NULL,
-    nombreVia       VARCHAR2(50) NOT NULL,
-    numInmueble     VARCHAR2(30) NOT NULL,
-    numBloque       VARCHAR2(30),
-    escalera        VARCHAR2(50),
-    piso            VARCHAR2(30),
-    puerta          VARCHAR2(30),
-    codigoPostal    VARCHAR2(50) NOT NULL,
-    ciudad          VARCHAR2(50) NOT NULL,
-    pais            VARCHAR2(50) NOT NULL,
-    CONSTRAINT pk_direccion PRIMARY KEY(tipoVia, nombreVia, numInmueble,  codigoPostal, ciudad, pais)
-);
-
---BIEN
 CREATE TABLE tarjetaCredito (
     numTarjeta      VARCHAR2(50),
     titular         VARCHAR2(50) NOT NULL,
@@ -140,12 +125,27 @@ CREATE TABLE tarjetaCredito (
 
 --BIEN
 CREATE TABLE descuento (
-    idUsuario           VARCHAR2(50),
-    porcentaje          VARCHAR(50)  NOT NULL,
-    fecha               DATE NOT NULL,
-    CONSTRAINT pk_descuento PRIMARY KEY(idUsuario),
-    CONSTRAINT ck_porcentaje CHECK (porcentaje BETWEEN 0 AND 100)
+    porcentaje          VARCHAR2(50),
+    fecha               DATE,
+    CONSTRAINT pk_descuento PRIMARY KEY(porcentaje)
 );
+
+--BIEN
+CREATE TABLE direccion (
+    idDireccion     NUMBER(10),
+    tipoVia         VARCHAR2(50) NOT NULL,
+    nombreVia       VARCHAR2(50) NOT NULL,
+    numInmueble     VARCHAR2(30) NOT NULL,
+    numBloque       VARCHAR2(30),
+    escalera        VARCHAR2(50),
+    piso            VARCHAR2(30),
+    puerta          VARCHAR2(30),
+    codigoPostal    VARCHAR2(50) NOT NULL,
+    ciudad          VARCHAR2(50) NOT NULL,
+    pais            VARCHAR2(50) NOT NULL,
+    CONSTRAINT pk_direccion PRIMARY KEY(idDireccion)
+);
+
 
 --BIEN
 CREATE TABLE registrado (
@@ -154,21 +154,12 @@ CREATE TABLE registrado (
     fechaHoraRegistro       DATE NOT NULL,
     preferenciaContacto     VARCHAR2(50) NOT NULL,
     tarjeta                 VARCHAR2(50) NOT NULL,
-    bonoDescuento           VARCHAR2(50) NOT NULL,
-    tipoVia                 VARCHAR2(50) NOT NULL,
-    nombreVia               VARCHAR2(50) NOT NULL,
-    numInmueble             VARCHAR2(3) NOT NULL,
-    numBloque               VARCHAR2(3),
-    escalera                VARCHAR2(50),
-    piso                    VARCHAR2(2),
-    puerta                  VARCHAR2(2),
-    codigoPostal            VARCHAR2(50) NOT NULL,
-    ciudad                  VARCHAR2(50) NOT NULL,
-    pais                    VARCHAR2(50) NOT NULL,
+    porcentaje           VARCHAR2(50) NOT NULL,
+    direccion               NUMBER(8) NOT NULL,
     CONSTRAINT pk_registrado_usuario PRIMARY KEY(usuario),
-    CONSTRAINT fk_registrado_direccion FOREIGN KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais), --seria restrcit pero no existe en oracle
+    CONSTRAINT fk_registrado_direccion FOREIGN KEY(direccion) REFERENCES direccion(idDireccion), --seria restrcit pero no existe en oracle
     CONSTRAINT fk_registrado_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta), --seria restrcit pero no existe en oracle
-    CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(bonoDescuento) REFERENCES descuento(idUsuario),
+    CONSTRAINT fk_registrado_bonoDescuento FOREIGN KEY(porcentaje) REFERENCES descuento(porcentaje),
     CONSTRAINT ck_registrado_preferenciaContacto CHECK (preferenciaContacto IN 
     ('correo', 'llamada telefónica', 'sms', 'whatsapp', 'facebook', 'wechat', 'qqmobile', 'snapchat', 'telegram'))
 );
@@ -186,18 +177,9 @@ CREATE TABLE pedidoCliente (
     fechaHoraEntrega    DATE NOT NULL,
     precioTotal         VARCHAR2(50) NOT NULL,
     tipoPago            VARCHAR2(50) NOT NULL,
-    tipoVia             VARCHAR2(50) NOT NULL,
-    nombreVia           VARCHAR2(50) NOT NULL,
-    numInmueble         VARCHAR2(3) NOT NULL,
-    numBloque           VARCHAR2(3),
-    escalera            VARCHAR2(50),
-    piso                VARCHAR2(2),
-    puerta              VARCHAR2(2),
-    codigoPostal        VARCHAR2(50) NOT NULL,
-    ciudad              VARCHAR2(50) NOT NULL,
-    pais                VARCHAR2(50) NOT NULL,
+    direccion           NUMBER(8) NOT NULL,
     CONSTRAINT pk_pedidoCliente PRIMARY KEY(correo, telefono),
-    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais) REFERENCES direccion(tipoVia, nombreVia, numInmueble, numBloque, escalera, piso, puerta, codigoPostal, ciudad, pais),
+    CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(idDireccion),
     CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta),
     CONSTRAINT uk_cliente_correo UNIQUE(correo),
     CONSTRAINT uk_cliente_telefono UNIQUE(telefono),
@@ -237,7 +219,9 @@ CREATE TABLE  review(
 
 
 
+CREATE SEQUENCE secDireccion START WITH 1 INCREMENT BY 1 NOCACHE;
 
 
 --tabla formato borrada actualizar draw.io
 --crear tabla nn de descuentoCliente pq sino dificil identificar sera tipo descuentoCliente(usuario,descuento)
+
