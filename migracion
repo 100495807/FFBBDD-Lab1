@@ -168,91 +168,133 @@ WHERE
 
 --bill cliente registrado
 
-INSERT INTO registrado(usuario, fechaRegistro, horaRegistro, contrasena)
+INSERT INTO registrado(usuario, contrasena, fechaHoraRegistro, preferenciaContacto, porcentaje)
     SELECT DISTINCT
         username as usuario,
-        TO_DATE(dliv_date || ' ' || dliv_time, 'YYYY / MM / DD HH:MI:SS AM') as FechaHoraEntrega,
-        reg_time as horaRegistro,
-        user_passw as contrasena
-        
+        user_passw as contrasena,
+        TO_DATE(reg_date || ' ' || reg_time, 'YYYY / MM / DD HH:MI:SS AM') as FechaHoraEntrega,
+        NULL AS preferenciaContacto,
+        discount as porcentaje
 FROM fsdb.trolley
 WHERE
     username IS NOT NULL
-    AND reg_date IS NOT NULL
-    AND reg_time IS NOT NULL
+    AND discount IS NOT NULL
     AND user_passw IS NOT NULL;
 
 
-INSERT INTO pedidoCliente(tipoPago, fechaPago, horaPago, fechaEntrega, horaEntrega)
+INSERT INTO direccionCliente(idCliente, idDireccion)
     SELECT DISTINCT
+    username as usuario,
+    dir.idDireccion as idDireccion
+    FROM fsdb.trolley 
+    troll INNER JOIN direccion dir ON 
+    troll.dliv_waytype = dir.tipoVia 
+    AND troll.dliv_wayname = dir.nombreVia
+    AND troll.dliv_zip = dir.codigoPostal
+    AND troll.dliv_town = dir.ciudad
+    AND troll.dliv_country = dir.pais
+    WHERE
+    username IS NOT NULL 
+    AND user_passw IS NOT NULL 
+    AND dliv_waytype IS NOT NULL 
+    AND dliv_wayname IS NOT NULL
+    AND dliv_zip IS NOT NULL
+    AND dliv_town IS NOT NULL
+    AND dliv_country IS NOT NULL;
+
+INSERT INTO tarjetaCliente(numTarjeta, idCliente)
+    SELECT DISTINCT 
+        card_number as numTarjeta,
+        username as idCliente
+    FROM fsdb.trolley    WHERE 
+        card_number is not null 
+        AND username is not null;
+
+INSERT INTO pedidoCliente(idPedido, correo, telefono, fecha, tipoPago, fechaHoraPago, tarjeta, fechaHoraEntrega, nombre, apellido1, apellido2, direccion)
+    SELECT 
+    secPedido.NEXTVAL as idPedido,
+    correo, telefono, fecha, tipoPago, fechaHoraPago, tarjeta, fechaHoraEntrega, nombre, apellido1, apellido2, direccion
+    FROM (SELECT DISTINCT 
+        client_email as correo,
+        client_mobile as telefono,
+        TO_DATE(orderdate || ' ' || ordertime, 'YYYY / MM / DD HH:MI:SS AM') as fecha,
         payment_type as tipoPago,
-        payment_date as fechaEntrega,
-        payment_time as horaPago,
-        dliv_date as fechaEntrega,
-        dliv_time as horaEntrega
-        
-FROM fsdb.trolley
-WHERE
-    payment_type IS NOT NULL
-    AND payment_date IS NOT NULL
-    AND payment_time IS NOT NULL
-    AND dliv_date IS NOT NULL
-    AND dliv_time IS NOT NULL;
+        TO_DATE(payment_date || ' ' || payment_time, 'YYYY / MM / DD HH:MI:SS AM') as fechaHoraPago,
+        card_number as tarjeta,
+        TO_DATE(dliv_date || ' ' || dliv_time, 'YYYY / MM / DD HH:MI:SS AM') as fechaHoraEntrega,
+        client_name as nombre,
+        client_surn1 as apellido1,
+        client_surn2 as apellido2,
+        dir.idDireccion as direccion
+    FROM fsdb.trolley troll INNER JOIN direccion dir ON 
+            troll.bill_waytype = dir.tipoVia 
+            AND troll.bill_wayname = dir.nombreVia 
+            AND troll.bill_zip = dir.codigoPostal
+            AND troll.bill_town = dir.ciudad
+            AND troll.bill_country = dir.pais
+            WHERE orderdate is not null
+            and ordertime is not null
+            and payment_type is not null
+            and payment_date is not null
+            and payment_time is not null
+            and dliv_date is not null
+            and dliv_time is not null
+            and client_name is not null
+            and client_surn1 is not null
+            AND bill_waytype IS NOT NULL 
+            AND bill_wayname IS NOT NULL
+            AND bill_zip IS NOT NULL
+            AND bill_town IS NOT NULL
+            AND bill_country IS NOT NULL
+    );
 
 
 
-INSERT INTO pedidoArticuloCliente(cantidad)
+INSERT INTO pedidoArticuloCliente(idClienteReg, idPedido, idArticulo, cantidad)
     SELECT DISTINCT
+        username as idClienteReg,
+        pedCli.idPedido as idPedido,
+        barcode as idArticulo,
         quantity as cantidad
-        
-FROM fsdb.trolley
-WHERE
-    quantity IS NOT NULL;
+    from fsdb.trolley troll inner join pedidoCliente pedCli on troll.client_name = pedCli.nombre
+    and troll.client_surn1 = pedCli.apellido1
+    and troll.payment_type = pedCli.tipoPago
+    and TO_DATE(troll.payment_date || ' ' || troll.payment_time, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fechaHoraPago
+    and TO_DATE(troll.orderdate || ' ' || troll.ordertime, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fecha
+    and TO_DATE(troll.dliv_date || ' ' || troll.dliv_time, 'YYYY / MM / DD HH:MI:SS AM') = pedCli.fechaHoraEntrega
+    inner join articulo art on troll.barcode = art.idCodigo
+    where username is not null
+    and client_name is not null
+    and client_surn1 is not null
+    and payment_type is not null
+    and payment_date is not null
+    and orderdate is not null
+    and dliv_date is not null
+    and barcode is not null
+    and quantity is not null;
 
 
-INSERT INTO producto(nombre)
+
+INSERT INTO review(fechaHora, usuario, producto, articulo, puntuacion, titulo, texto, meGusta, refrenda)
     SELECT DISTINCT
-        product as nombre
-        
-FROM fsdb.posts
-WHERE
-    product IS NOT NULL;
-
-
-INSERT INTO articulo(idCodigo)
-    SELECT DISTINCT
-        barcode as idCodigo
-        
-FROM fsdb.posts
-WHERE
-    barcode IS NOT NULL;
-
-
-INSERT INTO registrado(usuario)
-    SELECT DISTINCT
-        username as usuario
-        
-FROM fsdb.posts
-WHERE
-    username IS NOT NULL;
-
-
-INSERT INTO review(fecha, hora, titulo, texto, puntuacion, meGusta, refrenda)
-    SELECT DISTINCT
-        post_date as fecha,
-        post_time as hora,
+        TO_DATE(post_date || ' ' || post_time, 'YYYY / MM / DD HH:MI:SS AM') as fechaHora,
+        username as usuario,
+        product as producto,
+        barcode as articulo,
+        score as puntuacion,
         title as titulo,
         text as texto,
-        score as puntuacion,
         likes as meGusta,
         endorsed as refrenda
-        
-FROM fsdb.posts
-WHERE
-    post_date IS NOT NULL
-    AND post_time IS NOT NULL
-    AND title IS NOT NULL
-    AND text IS NOT NULL
-    AND score IS NOT NULL
-    AND likes IS NOT NULL
-    AND endorsed IS NOT NULL;
+    from fsdb.posts p inner join registrado cli_reg on p.username = cli_reg.usuario
+    inner join articulo art on p.barcode = art.idCodigo
+    inner join producto prod on p.product = prod.nombre
+    where
+        username is not null
+        and product is not null
+        and score is not null
+        and title is not null
+        and text is not null
+        and post_date is not null
+        and post_time is not null
+        and likes is not null;
