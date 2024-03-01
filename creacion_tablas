@@ -15,6 +15,7 @@ DROP TABLE formatoProducto CASCADE CONSTRAINTS;
 DROP TABLE cantidad CASCADE CONSTRAINTS;
 DROP TABLE producto CASCADE CONSTRAINTS;
 DROP SEQUENCE secDireccion;
+DROP SEQUENCE secPedido;
 
 
 
@@ -187,17 +188,17 @@ CREATE TABLE pedidoCliente (
     apellido2           VARCHAR2(50),
     fecha               DATE NOT NULL,
     fechaHoraPago       DATE NOT NULL,
-    tarjeta             VARCHAR2(20) NOT NULL,
+    tarjeta             VARCHAR2(20),
     fechaHoraEntrega    DATE NOT NULL,
-    precioTotal         VARCHAR2(50) NOT NULL,
     tipoPago            CHAR(15) NOT NULL,
-    direccion           NUMBER(10) NOT NULL,
+    direccion           NUMBER(10),
     CONSTRAINT pk_pedidoCliente PRIMARY KEY(idPedido),
     CONSTRAINT fk_pedidoCliente_direccion FOREIGN KEY(direccion) REFERENCES direccion(idDireccion),
     CONSTRAINT fk_pedidoCliente_tarjeta FOREIGN KEY(tarjeta) REFERENCES tarjetaCredito(numTarjeta),
     CONSTRAINT ck_pedidoCliente_tipoPago CHECK(tipoPago IN ('credit card', 'bank transfer', 'COD')),
     CONSTRAINT ck_cliente_correOtel CHECK (correo IS NOT NULL OR telefono IS NOT NULL)
 );
+
 
 CREATE TABLE pedidoArticuloCliente (
     idArticulo      CHAR(15) NOT NULL,
@@ -233,7 +234,7 @@ CREATE TABLE  review(
 
 
 CREATE SEQUENCE secDireccion START WITH 1 INCREMENT BY 1 NOCACHE;
-
+CREATE SEQUENCE secPedido START WITH 1 INCREMENT BY 1 NOCACHE;
 
 --tabla formato borrada actualizar draw.io
 --crear tabla nn de descuentoCliente pq sino dificil identificar sera tipo descuentoCliente(usuario,descuento)
