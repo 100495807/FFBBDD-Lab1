@@ -19,21 +19,21 @@ DROP SEQUENCE secPedido;
 
 
 
---BIEN
+
 CREATE TABLE producto (         
     nombre      VARCHAR2 (50),
     coffea      VARCHAR2 (50) NOT NULL,
-    varietal    VARCHAR2 (50) NOT NULL, ------etc
+    varietal    VARCHAR2 (50) NOT NULL, 
     origen      VARCHAR2 (50) NOT NULL,
     tostado     CHAR(10) NOT NULL,
-    cafeina     CHAR(12) NOT NULL,            --yes/no
+    cafeina     CHAR(12) NOT NULL,           
     CONSTRAINT pk_producto PRIMARY KEY (nombre),
     CONSTRAINT ck_producto_cafeina CHECK (cafeina IN ('yes','no')),
     CONSTRAINT ck_producto_tostado CHECK (tostado IN ('natural', 'high-roast', 'blend'))
 );
 
 
---BIEN
+
 CREATE TABLE cantidad (
     packaging   VARCHAR2(50),
     cantidad    VARCHAR2(50),
@@ -42,7 +42,7 @@ CREATE TABLE cantidad (
 );
 
 
---BIEN
+
 CREATE TABLE formatoProducto (
     idProducto     VARCHAR2(50) NOT NULL,
     formato         CHAR(20) NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE formatoProducto (
     CONSTRAINT ck_formato CHECK (formato IN ('raw bean', 'roasted bean', 'ground', 'freeze-dried', 'capsules', 'prepared'))--PONER TILDE EN CAPSULA
 );
 
---BIEN
+
 CREATE TABLE articulo (
     idCodigo    CHAR(15),
     packaging   VARCHAR(50) NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE articulo (
     CONSTRAINT ck_articulo_stockMax CHECK (stockMax>10)
 );
 
---BIEN
+
 CREATE TABLE proveedor (
     cif             CHAR(10), --chequear cuantos digitos tiene el char del cif
     nombreComercio  VARCHAR2(50) NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE proveedor (
     CONSTRAINT uk_proveedor_Direccion_Postal UNIQUE (DireccionPostal)
 );
 
---BIEN
+
 CREATE TABLE pedidosProveedor ( 
     proveedor           CHAR(10) NOT NULL,
     cantidadUnidad      VARCHAR2(50) NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE pedidosProveedor (
     CONSTRAINT ck_pedidosProveedor_estado CHECK (estado IN ('draft', 'placed', 'fulfilled'))
 );
 
---BIEN
+
 CREATE TABLE proveedorArticulo (
     idArticulo      CHAR(15) NOT NULL,
     idProveedor     CHAR(10) NOT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE proveedorArticulo (
     CONSTRAINT fk_proveedorArticulo_idProveedor FOREIGN KEY(idProveedor) REFERENCES proveedor(cif) ON DELETE CASCADE
 );
 
---BIEN
+
 CREATE TABLE tarjetaCredito (
     numTarjeta      VARCHAR2(50),
     titular         VARCHAR2(50) NOT NULL,
@@ -125,14 +125,14 @@ CREATE TABLE tarjetaCredito (
     CONSTRAINT pk_tarjetaCredito PRIMARY KEY(numTarjeta)
 );
 
---BIEN
+
 CREATE TABLE descuento (
     porcentaje          VARCHAR2(50),
     fecha               DATE,
     CONSTRAINT pk_descuento PRIMARY KEY(porcentaje)
 );
 
---BIEN
+
 CREATE TABLE direccion (
     idDireccion     NUMBER(10),
     tipoVia         CHAR(10) NOT NULL,
@@ -150,7 +150,7 @@ CREATE TABLE direccion (
 
 
 
---BIEN
+
 CREATE TABLE registrado (
     usuario                 VARCHAR2(50),
     contrasena              VARCHAR2(50) NOT NULL,         
@@ -178,7 +178,7 @@ CREATE TABLE tarjetaCliente(
     CONSTRAINT fk_tarjetaCliente_idCliente FOREIGN KEY (idCliente) REFERENCES registrado(usuario)
 );
 
---BIEN
+
 CREATE TABLE pedidoCliente (
     idPedido            NUMBER(10), --
     correo              VARCHAR2(70), --
@@ -236,6 +236,4 @@ CREATE TABLE  review(
 CREATE SEQUENCE secDireccion START WITH 1 INCREMENT BY 1 NOCACHE;
 CREATE SEQUENCE secPedido START WITH 1 INCREMENT BY 1 NOCACHE;
 
---tabla formato borrada actualizar draw.io
---crear tabla nn de descuentoCliente pq sino dificil identificar sera tipo descuentoCliente(usuario,descuento)
 
